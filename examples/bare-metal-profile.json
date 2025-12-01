@@ -36,7 +36,7 @@
         "RuntimeStateFile": "BareMetalVM.vmrs",
         "ExposeVirtualizationExtensions": false,
         "AntiDetectionProfile": "bare-metal",
-        "Smbios": {
+        "ChipsetInformation": {
             "Manufacturer": "Dell Inc.",
             "ProductName": "OptiPlex 7090",
             "Version": "1.0",

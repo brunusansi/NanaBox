@@ -57,6 +57,18 @@ namespace NanaBox
         PhysicalDevice = 3,
     };
 
+    /// <summary>
+    /// Anti-detection profile presets
+    /// Phase 1: Configuration schema only
+    /// Phase 2+: Actual implementation
+    /// </summary>
+    enum class AntiDetectionProfile : std::int32_t
+    {
+        Vanilla = 0,    // No anti-detection (default)
+        Balanced = 1,   // Moderate anti-detection with good performance
+        BareMetal = 2,  // Maximum anti-detection effort
+    };
+
     struct ComPortsConfiguration
     {
         UefiConsoleMode UefiConsole = UefiConsoleMode::Disabled;
@@ -148,6 +160,43 @@ namespace NanaBox
         std::string Name;
     };
 
+    /// <summary>
+    /// CPUID spoofing configuration
+    /// Phase 1: Configuration schema only (reserved for future use)
+    /// Phase 3: Implementation with guest-side driver
+    /// </summary>
+    struct CpuIdConfiguration
+    {
+        bool Enabled = false;                        // Enable CPUID spoofing
+        bool HideHypervisor = false;                 // TODO(Phase3): Hide hypervisor present bit
+        std::string VendorString;                    // TODO(Phase3): CPU vendor string ("GenuineIntel", "AuthenticAMD")
+        bool MaskVirtualizationFeatures = false;     // TODO(Phase3): Hide VMX/SVM features
+    };
+
+    /// <summary>
+    /// MSR (Model-Specific Register) interception configuration
+    /// Phase 1: Configuration schema only (reserved for future use)
+    /// Phase 3: Implementation with HCS API and/or guest-side driver
+    /// </summary>
+    struct MsrInterceptConfiguration
+    {
+        bool Enabled = false;                        // Enable MSR interception
+        bool BlockHyperVMsrs = false;                // TODO(Phase3): Block access to Hyper-V MSR range
+        bool NormalizeTSC = false;                   // TODO(Phase4): Normalize Time Stamp Counter behavior
+    };
+
+    /// <summary>
+    /// ACPI table override configuration
+    /// Phase 1: Configuration schema only (reserved for future use)
+    /// Phase 4: Implementation with EFI helper and table injection
+    /// </summary>
+    struct AcpiOverrideConfiguration
+    {
+        bool Enabled = false;                        // Enable ACPI overrides
+        bool RemoveHyperVDevices = false;            // TODO(Phase4): Remove Hyper-V ACPI devices
+        std::string CustomDSDT;                      // TODO(Phase4): Path to custom DSDT table file
+    };
+
     struct VirtualMachineConfiguration
     {
         std::uint32_t Version = 1;
@@ -171,6 +220,13 @@ namespace NanaBox
         VideoMonitorConfiguration VideoMonitor;
         std::vector<std::string> Policies;
         std::vector<Plan9ShareConfiguration> Plan9Shares;
+        
+        // Anti-Detection Edition fields (Phase 1+)
+        // Note: ChipsetInformation already serves as SMBIOS configuration
+        AntiDetectionProfile AntiDetectionProfile = AntiDetectionProfile::Vanilla;
+        CpuIdConfiguration CpuId;
+        MsrInterceptConfiguration MsrIntercept;
+        AcpiOverrideConfiguration AcpiOverride;
     };
 }
 
