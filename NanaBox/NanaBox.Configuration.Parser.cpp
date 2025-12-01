@@ -162,6 +162,38 @@ NanaBox::ScsiDeviceType NanaBox::ToScsiDeviceType(
     return NanaBox::ScsiDeviceType::Unknown;
 }
 
+nlohmann::json NanaBox::FromAntiDetectionProfile(
+    NanaBox::AntiDetectionProfile const& Value)
+{
+    if (NanaBox::AntiDetectionProfile::Balanced == Value)
+    {
+        return "balanced";
+    }
+    else if (NanaBox::AntiDetectionProfile::BareMetal == Value)
+    {
+        return "bare-metal";
+    }
+
+    return "vanilla";
+}
+
+NanaBox::AntiDetectionProfile NanaBox::ToAntiDetectionProfile(
+    nlohmann::json const& Value)
+{
+    std::string RawValue = Mile::Json::ToString(Value);
+
+    if (0 == std::strcmp(RawValue.c_str(), "balanced"))
+    {
+        return NanaBox::AntiDetectionProfile::Balanced;
+    }
+    else if (0 == std::strcmp(RawValue.c_str(), "bare-metal"))
+    {
+        return NanaBox::AntiDetectionProfile::BareMetal;
+    }
+
+    return NanaBox::AntiDetectionProfile::Vanilla;
+}
+
 nlohmann::json NanaBox::FromComPortsConfiguration(
     NanaBox::ComPortsConfiguration const& Value)
 {
@@ -840,6 +872,144 @@ NanaBox::Plan9ShareConfiguration NanaBox::ToPlan9ShareConfiguration(
     return Result;
 }
 
+nlohmann::json NanaBox::FromCpuIdConfiguration(
+    NanaBox::CpuIdConfiguration const& Value)
+{
+    nlohmann::json Result;
+
+    if (Value.Enabled)
+    {
+        Result["Enabled"] = true;
+    }
+
+    if (Value.HideHypervisor)
+    {
+        Result["HideHypervisor"] = true;
+    }
+
+    if (!Value.VendorString.empty())
+    {
+        Result["VendorString"] = Value.VendorString;
+    }
+
+    if (Value.MaskVirtualizationFeatures)
+    {
+        Result["MaskVirtualizationFeatures"] = true;
+    }
+
+    return Result;
+}
+
+NanaBox::CpuIdConfiguration NanaBox::ToCpuIdConfiguration(
+    nlohmann::json const& Value)
+{
+    NanaBox::CpuIdConfiguration Result;
+
+    Result.Enabled = Mile::Json::ToBoolean(
+        Mile::Json::GetSubKey(Value, "Enabled"),
+        Result.Enabled);
+
+    Result.HideHypervisor = Mile::Json::ToBoolean(
+        Mile::Json::GetSubKey(Value, "HideHypervisor"),
+        Result.HideHypervisor);
+
+    Result.VendorString = Mile::Json::ToString(
+        Mile::Json::GetSubKey(Value, "VendorString"),
+        Result.VendorString);
+
+    Result.MaskVirtualizationFeatures = Mile::Json::ToBoolean(
+        Mile::Json::GetSubKey(Value, "MaskVirtualizationFeatures"),
+        Result.MaskVirtualizationFeatures);
+
+    return Result;
+}
+
+nlohmann::json NanaBox::FromMsrInterceptConfiguration(
+    NanaBox::MsrInterceptConfiguration const& Value)
+{
+    nlohmann::json Result;
+
+    if (Value.Enabled)
+    {
+        Result["Enabled"] = true;
+    }
+
+    if (Value.BlockHyperVMsrs)
+    {
+        Result["BlockHyperVMsrs"] = true;
+    }
+
+    if (Value.NormalizeTSC)
+    {
+        Result["NormalizeTSC"] = true;
+    }
+
+    return Result;
+}
+
+NanaBox::MsrInterceptConfiguration NanaBox::ToMsrInterceptConfiguration(
+    nlohmann::json const& Value)
+{
+    NanaBox::MsrInterceptConfiguration Result;
+
+    Result.Enabled = Mile::Json::ToBoolean(
+        Mile::Json::GetSubKey(Value, "Enabled"),
+        Result.Enabled);
+
+    Result.BlockHyperVMsrs = Mile::Json::ToBoolean(
+        Mile::Json::GetSubKey(Value, "BlockHyperVMsrs"),
+        Result.BlockHyperVMsrs);
+
+    Result.NormalizeTSC = Mile::Json::ToBoolean(
+        Mile::Json::GetSubKey(Value, "NormalizeTSC"),
+        Result.NormalizeTSC);
+
+    return Result;
+}
+
+nlohmann::json NanaBox::FromAcpiOverrideConfiguration(
+    NanaBox::AcpiOverrideConfiguration const& Value)
+{
+    nlohmann::json Result;
+
+    if (Value.Enabled)
+    {
+        Result["Enabled"] = true;
+    }
+
+    if (Value.RemoveHyperVDevices)
+    {
+        Result["RemoveHyperVDevices"] = true;
+    }
+
+    if (!Value.CustomDSDT.empty())
+    {
+        Result["CustomDSDT"] = Value.CustomDSDT;
+    }
+
+    return Result;
+}
+
+NanaBox::AcpiOverrideConfiguration NanaBox::ToAcpiOverrideConfiguration(
+    nlohmann::json const& Value)
+{
+    NanaBox::AcpiOverrideConfiguration Result;
+
+    Result.Enabled = Mile::Json::ToBoolean(
+        Mile::Json::GetSubKey(Value, "Enabled"),
+        Result.Enabled);
+
+    Result.RemoveHyperVDevices = Mile::Json::ToBoolean(
+        Mile::Json::GetSubKey(Value, "RemoveHyperVDevices"),
+        Result.RemoveHyperVDevices);
+
+    Result.CustomDSDT = Mile::Json::ToString(
+        Mile::Json::GetSubKey(Value, "CustomDSDT"),
+        Result.CustomDSDT);
+
+    return Result;
+}
+
 nlohmann::json NanaBox::FromVirtualMachineConfiguration(
     NanaBox::VirtualMachineConfiguration const& Value)
 {
@@ -983,6 +1153,40 @@ nlohmann::json NanaBox::FromVirtualMachineConfiguration(
         Result["Plan9Shares"] = Plan9Shares;
     }
 
+    // Anti-Detection Edition fields (Phase 1+)
+    if (NanaBox::AntiDetectionProfile::Vanilla != Value.AntiDetectionProfile)
+    {
+        Result["AntiDetectionProfile"] = 
+            NanaBox::FromAntiDetectionProfile(Value.AntiDetectionProfile);
+    }
+
+    {
+        nlohmann::json CpuId =
+            NanaBox::FromCpuIdConfiguration(Value.CpuId);
+        if (!CpuId.empty())
+        {
+            Result["CpuId"] = CpuId;
+        }
+    }
+
+    {
+        nlohmann::json MsrIntercept =
+            NanaBox::FromMsrInterceptConfiguration(Value.MsrIntercept);
+        if (!MsrIntercept.empty())
+        {
+            Result["MsrIntercept"] = MsrIntercept;
+        }
+    }
+
+    {
+        nlohmann::json AcpiOverride =
+            NanaBox::FromAcpiOverrideConfiguration(Value.AcpiOverride);
+        if (!AcpiOverride.empty())
+        {
+            Result["AcpiOverride"] = AcpiOverride;
+        }
+    }
+
     return Result;
 }
 
@@ -1099,6 +1303,19 @@ NanaBox::VirtualMachineConfiguration NanaBox::ToVirtualMachineConfiguration(
 
         Result.Plan9Shares.push_back(Current);
     }
+
+    // Anti-Detection Edition fields (Phase 1+)
+    Result.AntiDetectionProfile = NanaBox::ToAntiDetectionProfile(
+        Mile::Json::GetSubKey(Value, "AntiDetectionProfile"));
+
+    Result.CpuId = NanaBox::ToCpuIdConfiguration(
+        Mile::Json::GetSubKey(Value, "CpuId"));
+
+    Result.MsrIntercept = NanaBox::ToMsrInterceptConfiguration(
+        Mile::Json::GetSubKey(Value, "MsrIntercept"));
+
+    Result.AcpiOverride = NanaBox::ToAcpiOverrideConfiguration(
+        Mile::Json::GetSubKey(Value, "AcpiOverride"));
 
     return Result;
 }

@@ -95,6 +95,30 @@ namespace NanaBox
     Plan9ShareConfiguration ToPlan9ShareConfiguration(
         nlohmann::json const& Value);
 
+    nlohmann::json FromAntiDetectionProfile(
+        AntiDetectionProfile const& Value);
+
+    AntiDetectionProfile ToAntiDetectionProfile(
+        nlohmann::json const& Value);
+
+    nlohmann::json FromCpuIdConfiguration(
+        CpuIdConfiguration const& Value);
+
+    CpuIdConfiguration ToCpuIdConfiguration(
+        nlohmann::json const& Value);
+
+    nlohmann::json FromMsrInterceptConfiguration(
+        MsrInterceptConfiguration const& Value);
+
+    MsrInterceptConfiguration ToMsrInterceptConfiguration(
+        nlohmann::json const& Value);
+
+    nlohmann::json FromAcpiOverrideConfiguration(
+        AcpiOverrideConfiguration const& Value);
+
+    AcpiOverrideConfiguration ToAcpiOverrideConfiguration(
+        nlohmann::json const& Value);
+
     nlohmann::json FromVirtualMachineConfiguration(
         VirtualMachineConfiguration const& Value);
 

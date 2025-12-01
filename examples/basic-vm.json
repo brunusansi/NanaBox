@@ -1,0 +1,60 @@
+{
+    "NanaBox": {
+        "Type": "VirtualMachine",
+        "Version": 1,
+        "GuestType": "Windows",
+        "Name": "BasicVM",
+        "ProcessorCount": 4,
+        "MemorySize": 4096,
+        "ComPorts": {
+            "UefiConsole": "Disabled"
+        },
+        "Gpu": {
+            "AssignmentMode": "Disabled"
+        },
+        "NetworkAdapters": [
+            {
+                "Connected": true,
+                "MacAddress": "",
+                "EndpointId": ""
+            }
+        ],
+        "ScsiDevices": [
+            {
+                "Type": "VirtualDisk",
+                "Path": "BasicVM.vhdx"
+            },
+            {
+                "Type": "VirtualImage",
+                "Path": ""
+            }
+        ],
+        "SecureBoot": true,
+        "Tpm": false,
+        "GuestStateFile": "BasicVM.vmgs",
+        "RuntimeStateFile": "BasicVM.vmrs",
+        "ExposeVirtualizationExtensions": false,
+        "AntiDetectionProfile": "vanilla",
+        "ChipsetInformation": {
+            "Manufacturer": "",
+            "ProductName": "",
+            "Version": "",
+            "SerialNumber": "",
+            "UUID": "",
+            "SKUNumber": "",
+            "Family": "",
+            "BaseBoardSerialNumber": "",
+            "ChassisSerialNumber": "",
+            "ChassisAssetTag": ""
+        },
+        "CpuId": {
+            "Enabled": false
+        },
+        "MsrIntercept": {
+            "Enabled": false
+        },
+        "AcpiOverride": {
+            "Enabled": false
+        }
+    }
+}

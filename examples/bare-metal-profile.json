@@ -1,0 +1,68 @@
+{
+    "NanaBox": {
+        "Type": "VirtualMachine",
+        "Version": 1,
+        "GuestType": "Windows",
+        "Name": "BareMetalVM",
+        "ProcessorCount": 8,
+        "MemorySize": 16384,
+        "ComPorts": {
+            "UefiConsole": "Disabled"
+        },
+        "Gpu": {
+            "AssignmentMode": "Default",
+            "EnableHostDriverStore": false
+        },
+        "NetworkAdapters": [
+            {
+                "Connected": true,
+                "MacAddress": "E4-5F-01-23-45-67",
+                "EndpointId": ""
+            }
+        ],
+        "ScsiDevices": [
+            {
+                "Type": "VirtualDisk",
+                "Path": "BareMetalVM.vhdx"
+            },
+            {
+                "Type": "VirtualImage",
+                "Path": ""
+            }
+        ],
+        "SecureBoot": true,
+        "Tpm": true,
+        "GuestStateFile": "BareMetalVM.vmgs",
+        "RuntimeStateFile": "BareMetalVM.vmrs",
+        "ExposeVirtualizationExtensions": false,
+        "AntiDetectionProfile": "bare-metal",
+        "ChipsetInformation": {
+            "Manufacturer": "Dell Inc.",
+            "ProductName": "OptiPlex 7090",
+            "Version": "1.0",
+            "SerialNumber": "4ZMK3X3",
+            "UUID": "4c4c4544-005a-4d10-804b-b3c04f335833",
+            "SKUNumber": "0A10",
+            "Family": "OptiPlex",
+            "BaseBoardSerialNumber": "/4ZMK3X3/CNFCP0013O0116/",
+            "ChassisSerialNumber": "4ZMK3X3",
+            "ChassisAssetTag": ""
+        },
+        "CpuId": {
+            "Enabled": true,
+            "HideHypervisor": true,
+            "VendorString": "GenuineIntel",
+            "MaskVirtualizationFeatures": true
+        },
+        "MsrIntercept": {
+            "Enabled": true,
+            "BlockHyperVMsrs": true,
+            "NormalizeTSC": true
+        },
+        "AcpiOverride": {
+            "Enabled": true,
+            "RemoveHyperVDevices": true,
+            "CustomDSDT": ""
+        }
+    }
+}
