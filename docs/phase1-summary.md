@@ -148,8 +148,8 @@ scripts/
 ```
 NanaBox/
   ├── NanaBox.Configuration.Specification.h   (Extended with new structs)
-  ├── NanaBox.Configuration.Parser.h          (New parser functions)
-  └── NanaBox.Configuration.Parser.cpp        (Parser implementation)
+  ├── NanaBox.Configuration.Parser.h          (Added new parser functions)
+  └── NanaBox.Configuration.Parser.cpp        (Added parser implementations)
 
 Documents/
   └── ConfigurationReference.md               (Added anti-detection docs)

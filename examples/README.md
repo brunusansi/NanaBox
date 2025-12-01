@@ -120,7 +120,7 @@ After configuring your VM, test detection evasion with:
 
 For questions or issues:
 - See full documentation in `/docs/`
-- Check the configuration reference: `/Documents/ConfigurationReference.md`
+- Check the configuration reference: `Documents/ConfigurationReference.md`
 - Open an issue on GitHub
 
 ## License
