@@ -132,6 +132,20 @@
     - Port (Number)
     - Path (String)
     - Name (String)
+  - AntiDetectionProfile (String) [Anti-Detection Edition]
+  - CpuId (Object) [Anti-Detection Edition, Phase 3+]
+    - Enabled (Boolean)
+    - HideHypervisor (Boolean)
+    - VendorString (String)
+    - MaskVirtualizationFeatures (Boolean)
+  - MsrIntercept (Object) [Anti-Detection Edition, Phase 3+]
+    - Enabled (Boolean)
+    - BlockHyperVMsrs (Boolean)
+    - NormalizeTSC (Boolean)
+  - AcpiOverride (Object) [Anti-Detection Edition, Phase 4+]
+    - Enabled (Boolean)
+    - RemoveHyperVDevices (Boolean)
+    - CustomDSDT (String)
 
 ### NanaBox
 
@@ -1044,3 +1058,187 @@ Note: Available starting with NanaBox 1.5 Update 2.
   }
 }
 ```
+
+## Anti-Detection Edition Fields
+
+The following fields are extensions added by the NanaBox Anti-Detection Edition fork. These fields provide configuration for anti-detection features designed to help VMs evade virtualization detection.
+
+**Note**: Most anti-detection features are implemented in Phase 2+. Phase 1 only includes the configuration schema.
+
+### AntiDetectionProfile
+
+Selects a high-level anti-detection preset that controls multiple anti-detection features at once.
+
+Available values:
+- `"vanilla"` (default): No anti-detection measures, standard Hyper-V behavior
+- `"balanced"`: Moderate anti-detection with good performance and stability
+- `"bare-metal"`: Maximum anti-detection effort, may impact performance and features
+
+Example:
+```json
+{
+  "NanaBox": {
+    "AntiDetectionProfile": "balanced"
+  }
+}
+```
+
+This field is available in Phase 1+. The actual behavior changes are implemented in Phase 2+.
+
+### CpuId
+
+Configuration for CPUID instruction spoofing. CPUID is commonly used to detect hypervisors.
+
+**Status**: Configuration schema only (Phase 1). Implementation in Phase 3+.
+
+Fields:
+- `Enabled` (Boolean): Enable CPUID spoofing features
+- `HideHypervisor` (Boolean): Clear the hypervisor present bit (CPUID.0x1.ECX bit 31)
+- `VendorString` (String): CPU vendor string to report ("GenuineIntel", "AuthenticAMD", or other)
+- `MaskVirtualizationFeatures` (Boolean): Hide VMX/SVM virtualization features
+
+Example:
+```json
+{
+  "NanaBox": {
+    "CpuId": {
+      "Enabled": true,
+      "HideHypervisor": true,
+      "VendorString": "GenuineIntel",
+      "MaskVirtualizationFeatures": true
+    }
+  }
+}
+```
+
+**Implementation Note**: Phase 3 will implement this using HCS APIs where possible, with optional guest-side driver for advanced scenarios.
+
+### MsrIntercept
+
+Configuration for Model-Specific Register (MSR) interception. MSRs can reveal hypervisor presence.
+
+**Status**: Configuration schema only (Phase 1). Implementation in Phase 3+.
+
+Fields:
+- `Enabled` (Boolean): Enable MSR interception features
+- `BlockHyperVMsrs` (Boolean): Block access to Hyper-V specific MSR range (0x40000000-0x400000FF)
+- `NormalizeTSC` (Boolean): Normalize Time Stamp Counter behavior to appear more like bare metal
+
+Example:
+```json
+{
+  "NanaBox": {
+    "MsrIntercept": {
+      "Enabled": true,
+      "BlockHyperVMsrs": true,
+      "NormalizeTSC": true
+    }
+  }
+}
+```
+
+**Implementation Note**: Phase 3 will use HCS APIs for MSR filtering where available. Phase 4 adds TSC normalization.
+
+### AcpiOverride
+
+Configuration for ACPI (Advanced Configuration and Power Interface) table overrides. ACPI tables often contain hypervisor signatures.
+
+**Status**: Configuration schema only (Phase 1). Implementation in Phase 4+.
+
+Fields:
+- `Enabled` (Boolean): Enable ACPI override features
+- `RemoveHyperVDevices` (Boolean): Remove or hide Hyper-V specific ACPI devices (VMBus, synthetic devices)
+- `CustomDSDT` (String): Path to custom DSDT (Differentiated System Description Table) file
+
+Example:
+```json
+{
+  "NanaBox": {
+    "AcpiOverride": {
+      "Enabled": true,
+      "RemoveHyperVDevices": true,
+      "CustomDSDT": "C:\\VMs\\custom_dsdt.aml"
+    }
+  }
+}
+```
+
+**Implementation Note**: Phase 4 will implement ACPI table injection via EFI helper disk at boot time.
+
+### ChipsetInformation (SMBIOS)
+
+The existing `ChipsetInformation` object serves as SMBIOS (System Management BIOS) configuration. This is one of the most important anti-detection vectors.
+
+Anti-Detection Usage:
+- Use values from real hardware manufacturers (Dell, HP, Lenovo, ASUS, etc.)
+- Avoid obvious virtual machine indicators (e.g., "Microsoft Corporation", "Virtual Machine")
+- Ensure serial numbers, UUIDs, and other fields have realistic values
+
+See the `ChipsetInformation` section above for field details.
+
+Example (Dell OptiPlex):
+```json
+{
+  "NanaBox": {
+    "ChipsetInformation": {
+      "Manufacturer": "Dell Inc.",
+      "ProductName": "OptiPlex 7090",
+      "Version": "1.0",
+      "SerialNumber": "4ZMK3X3",
+      "UUID": "4c4c4544-005a-4d10-804b-b3c04f335833",
+      "SKUNumber": "0A10",
+      "Family": "OptiPlex",
+      "BaseBoardSerialNumber": "/4ZMK3X3/CNFCP0013O0116/",
+      "ChassisSerialNumber": "4ZMK3X3",
+      "ChassisAssetTag": ""
+    }
+  }
+}
+```
+
+**Implementation Note**: Phase 2 will implement SMBIOS injection using HCS API where available and EFI helper disk for full control.
+
+### NetworkAdapters (MAC Address Spoofing)
+
+The existing `NetworkAdapters` configuration supports custom MAC addresses, which is important for anti-detection.
+
+Anti-Detection Usage:
+- Avoid Microsoft's Hyper-V OUI: `00-15-5D`
+- Use OUIs from real network card manufacturers:
+  - Intel: `E4-5F-01`, `00-15-17`, `00-1B-21`
+  - Realtek: `00-E0-4C`, `52-54-00`, `E8-6A-64`
+  - Broadcom: `00-10-18`, `B8-CA-3A`
+
+Example:
+```json
+{
+  "NanaBox": {
+    "NetworkAdapters": [
+      {
+        "Connected": true,
+        "MacAddress": "E4-5F-01-23-45-67",
+        "EndpointId": ""
+      }
+    ]
+  }
+}
+```
+
+## Anti-Detection Best Practices
+
+1. **Start Conservative**: Begin with `"balanced"` profile and increase measures as needed
+2. **Test Incrementally**: Enable one anti-detection feature at a time
+3. **Use Real Hardware Values**: Extract SMBIOS and other values from real hardware
+4. **Monitor Performance**: Track VM performance impact of each anti-detection measure
+5. **Document Testing**: Keep notes on what works for specific games/anti-cheat systems
+
+## Anti-Detection Resources
+
+For more information about anti-detection features:
+- See `/docs/anti-detection-overview.md` for detailed detection vectors and mitigation strategies
+- See `/docs/roadmap.md` for the implementation roadmap and phase plan
+- See `/examples/` for sample configurations with anti-detection profiles
+
+## License
+
+NanaBox Anti-Detection Edition maintains the MIT License from the upstream NanaBox project.
