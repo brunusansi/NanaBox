@@ -33,6 +33,10 @@
 .PARAMETER Unattended
     Run in unattended mode with default "Yes" answers (NOT RECOMMENDED - use with caution).
 
+.PARAMETER Phase3B
+    Run Phase 3B setup workflow (build, install, start, and test nanabox_hvfilter driver).
+    This delegates to Setup-NbxHvFilterPhase3B.ps1 for the complete Phase 3B testing flow.
+
 .EXAMPLE
     .\Setup-NanaBoxDevEnv.ps1
     
@@ -47,6 +51,11 @@
     .\Setup-NanaBoxDevEnv.ps1 -SkipBuild -SkipInstall
     
     Only setup the environment (test signing, certificates) without building or installing.
+
+.EXAMPLE
+    .\Setup-NanaBoxDevEnv.ps1 -Phase3B
+    
+    Run Phase 3B automated setup (build, install, start, test nanabox_hvfilter driver).
 
 .NOTES
     Author: NanaBox Anti-Detection Edition Contributors
@@ -82,7 +91,10 @@ param(
     [switch]$SkipInstall,
     
     [Parameter(Mandatory=$false)]
-    [switch]$Unattended
+    [switch]$Unattended,
+    
+    [Parameter(Mandatory=$false)]
+    [switch]$Phase3B
 )
 
 #Requires -RunAsAdministrator
@@ -742,6 +754,31 @@ function Install-NanaBoxDriver {
 # ============================================================================
 
 function Start-SetupWizard {
+    # Check if Phase3B mode is requested
+    if ($Phase3B) {
+        Write-Header "NanaBox Anti-Detection Edition - Phase 3B Setup Mode"
+        Write-Info "Delegating to Setup-NbxHvFilterPhase3B.ps1 for Phase 3B testing workflow..."
+        Write-Host ""
+        
+        # Get the path to the Phase 3B script
+        $phase3BScript = Join-Path $PSScriptRoot "Setup-NbxHvFilterPhase3B.ps1"
+        
+        if (-not (Test-Path $phase3BScript)) {
+            Write-Error "Phase 3B script not found: $phase3BScript"
+            Write-Info "Please ensure Setup-NbxHvFilterPhase3B.ps1 exists in the scripts/setup directory."
+            exit 1
+        }
+        
+        Write-Info "Running: $phase3BScript"
+        Write-Host ""
+        
+        # Execute the Phase 3B script
+        & $phase3BScript
+        
+        # Exit with the same exit code as the Phase 3B script
+        exit $LASTEXITCODE
+    }
+    
     Write-Header "NanaBox Anti-Detection Edition - Development Environment Setup Wizard v$ScriptVersion"
     
     Write-Info "This wizard will set up your development environment for building NanaBox kernel drivers."

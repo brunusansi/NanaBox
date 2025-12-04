@@ -4,9 +4,94 @@ This directory contains setup and configuration scripts for preparing a developm
 
 ## Scripts
 
+### Setup-NbxHvFilterPhase3B.ps1 (⭐ Recommended for Phase 3B)
+
+**Purpose**: Automated Phase 3B setup for building, installing, starting, and testing the nanabox_hvfilter driver.
+
+**Requirements**:
+- Windows 10/11 (build 19041+)
+- PowerShell 5.1 or later
+- Administrator privileges
+- Test-signing enabled (script will check)
+- Visual Studio 2022 with C++ workload
+- Windows Driver Kit (WDK) 10.0.22621.0+
+
+**What it does**:
+1. **Environment Validation**: Checks for MSBuild, WDK, test-signing status
+2. **Build**: Compiles nanabox_hvfilter.sys and NbxHvFilterClient.exe
+3. **Install/Update**: Installs or updates the driver, handles existing installations
+4. **Start**: Starts the driver service
+5. **Test**: Runs IOCTL sanity checks with NbxHvFilterClient
+
+**Usage**:
+
+```powershell
+# Complete Phase 3B setup (recommended)
+.\Setup-NbxHvFilterPhase3B.ps1
+
+# Build in Debug configuration
+.\Setup-NbxHvFilterPhase3B.ps1 -Configuration Debug
+
+# Dry run - see what would be done without installing
+.\Setup-NbxHvFilterPhase3B.ps1 -DryRun
+
+# Use existing built binaries (skip build)
+.\Setup-NbxHvFilterPhase3B.ps1 -SkipBuild
+
+# Build only, don't install
+.\Setup-NbxHvFilterPhase3B.ps1 -SkipInstall -SkipStart
+
+# Get help and see all options
+Get-Help .\Setup-NbxHvFilterPhase3B.ps1 -Full
+```
+
+**See Also**: [PHASE3B_TESTING.md](../../drivers/nanabox_hvfilter/PHASE3B_TESTING.md) for detailed testing instructions.
+
+---
+
+## Quick Start for Phase 3B Testing
+
+**New to Phase 3B? Start here:**
+
+1. **Enable test-signing** (one-time setup):
+   ```cmd
+   # Run as Administrator
+   bcdedit /set testsigning on
+   bcdedit /set nointegritychecks on
+   shutdown /r /t 0
+   ```
+   Also disable Secure Boot in BIOS/UEFI.
+
+2. **Run the Phase 3B setup script**:
+   ```powershell
+   # Open PowerShell as Administrator
+   cd scripts\setup
+   .\Setup-NbxHvFilterPhase3B.ps1
+   ```
+
+3. **Verify everything works**:
+   The script will automatically build, install, start, and test the driver. Look for:
+   ```
+   Build:    OK
+   Install:  OK
+   Start:    OK (Running)
+   IOCTL Test: OK
+   ```
+
+4. **Test CPUID/MSR configuration**:
+   ```cmd
+   cd tools\NbxHvFilterClient\x64\Release
+   NbxHvFilterClient.exe set TestProfile 0x00000003
+   NbxHvFilterClient.exe status
+   ```
+
+See [PHASE3B_TESTING.md](../../drivers/nanabox_hvfilter/PHASE3B_TESTING.md) for comprehensive testing scenarios.
+
+---
+
 ### Setup-NanaBoxDevEnv.ps1
 
-**Purpose**: Automated setup wizard for NanaBox kernel driver development environment.
+**Purpose**: General-purpose automated setup wizard for NanaBox kernel driver development environment.
 
 **Requirements**:
 - Windows 10/11 (build 19041+)
@@ -25,6 +110,9 @@ This directory contains setup and configuration scripts for preparing a developm
 ```powershell
 # Basic usage - run the complete setup wizard interactively
 .\Setup-NanaBoxDevEnv.ps1
+
+# Phase 3B mode - delegates to Setup-NbxHvFilterPhase3B.ps1
+.\Setup-NanaBoxDevEnv.ps1 -Phase3B
 
 # Skip environment checks (if you know you have everything installed)
 .\Setup-NanaBoxDevEnv.ps1 -SkipEnvironmentCheck

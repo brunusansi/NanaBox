@@ -107,34 +107,62 @@ Clears the active profile and resets the driver to default state.
 
 ## Building the Driver
 
-### Prerequisites
+### Automated Setup (Recommended)
+
+For Phase 3B development and testing, use the automated setup script:
+
+```powershell
+# Run as Administrator
+cd scripts\setup
+
+# Complete Phase 3B setup: build, install, start, and test
+.\Setup-NbxHvFilterPhase3B.ps1
+
+# Or use the main setup script with Phase3B flag
+.\Setup-NanaBoxDevEnv.ps1 -Phase3B
+```
+
+The setup script will:
+1. ✅ Validate build environment (Visual Studio, MSBuild, WDK)
+2. ✅ Build nanabox_hvfilter.sys and NbxHvFilterClient.exe
+3. ✅ Install or update the driver
+4. ✅ Start the driver service
+5. ✅ Run basic IOCTL sanity checks
+
+See [PHASE3B_TESTING.md](../drivers/nanabox_hvfilter/PHASE3B_TESTING.md) for detailed usage and testing instructions.
+
+### Manual Build
+
+If you prefer to build manually:
+
+#### Prerequisites
 
 - **Windows 10/11** (build machine)
 - **Visual Studio 2022** with "Desktop development with C++"
 - **Windows Driver Kit (WDK) 10.0.22621.0** or later
 - **Windows SDK 10.0.22621.0** or later
 
-### Installation Steps
+#### Installation Steps
 
 1. Install Visual Studio 2022
 2. Download and install WDK from Microsoft:
    https://learn.microsoft.com/en-us/windows-hardware/drivers/download-the-wdk
 3. Install Windows SDK (included with WDK or Visual Studio)
 
-### Build Commands
+#### Build Commands
 
-#### Using Visual Studio
+**Using Visual Studio:**
 
 Open `nanabox_hvfilter.vcxproj` in Visual Studio and build the solution.
 
-#### Using Command Line
+**Using Command Line:**
 
 ```cmd
 cd drivers\nanabox_hvfilter
 msbuild nanabox_hvfilter.vcxproj /p:Configuration=Release /p:Platform=x64
 ```
 
-### Build Output
+#### Build Output
 
 - `nanabox_hvfilter.sys` - Driver binary
 - `nanabox_hvfilter.pdb` - Debug symbols
@@ -142,14 +170,32 @@ msbuild nanabox_hvfilter.vcxproj /p:Configuration=Release /p:Platform=x64
 
 ## Installing the Driver
 
-### Prerequisites
+### Automated Installation (Recommended)
+
+The easiest way to install and test the driver is using the Phase 3B setup script:
+
+```powershell
+# Run as Administrator
+cd scripts\setup
+
+# Automated build, install, start, and test
+.\Setup-NbxHvFilterPhase3B.ps1
+```
+
+This handles all the prerequisites, installation, and testing automatically. See [PHASE3B_TESTING.md](../drivers/nanabox_hvfilter/PHASE3B_TESTING.md) for details.
+
+### Manual Installation
+
+If you need to install manually or troubleshoot issues:
+
+#### Prerequisites
 
 **WARNING**: Test-signed drivers require specific system configuration:
 
 1. **Disable Secure Boot** in BIOS/UEFI
 2. **Enable Test Signing mode** (requires reboot)
 
-### Enable Test Signing
+#### Enable Test Signing
 
 Open an Administrator Command Prompt and run:
 
@@ -161,7 +207,7 @@ shutdown /r /t 0
 
 After reboot, you should see "Test Mode" watermark on the desktop.
 
-### Create Test Certificate (First Time Only)
+#### Create Test Certificate (First Time Only)
 
 ```cmd
 makecert -r -pe -ss PrivateCertStore -n "CN=NanaBox Test Certificate" nanabox_test.cer
@@ -169,16 +215,16 @@ certmgr.exe /add nanabox_test.cer /s /r localMachine root
 certmgr.exe /add nanabox_test.cer /s /r localMachine trustedpublisher
 ```
 
-### Sign the Driver
+#### Sign the Driver
 
 ```cmd
 cd drivers\nanabox_hvfilter\x64\Release
 signtool sign /v /s PrivateCertStore /n "NanaBox Test Certificate" nanabox_hvfilter.sys
 ```
 
-### Install the Driver
+#### Install the Driver
 
-#### Method 1: Manual Installation (Recommended for Development)
+**Method 1: Manual Installation (Recommended for Development)**
 
 ```cmd
 # Copy driver to system directory
