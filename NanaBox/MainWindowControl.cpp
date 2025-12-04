@@ -426,4 +426,20 @@ namespace winrt::NanaBox::implementation
             });
         }));
     }
+
+    void MainWindowControl::AntiDetectionSettingsButtonClick(
+        winrt::IInspectable const& sender,
+        winrt::RoutedEventArgs const& e)
+    {
+        UNREFERENCED_PARAMETER(sender);
+        UNREFERENCED_PARAMETER(e);
+
+        ::PostMessageW(
+            this->m_WindowHandle,
+            WM_COMMAND,
+            MAKEWPARAM(
+                NanaBox::MainWindowCommands::AntiDetectionSettings,
+                BN_CLICKED),
+            0);
+    }
 }

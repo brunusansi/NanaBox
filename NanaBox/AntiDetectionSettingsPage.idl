@@ -1,0 +1,8 @@
+namespace NanaBox
+{
+    [default_interface]
+    runtimeclass AntiDetectionSettingsPage : Windows.UI.Xaml.Controls.Page
+    {
+        AntiDetectionSettingsPage();
+    }
+}

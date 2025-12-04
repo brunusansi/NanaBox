@@ -173,6 +173,34 @@ nlohmann::json NanaBox::FromAntiDetectionProfile(
     {
         return "bare-metal";
     }
+    else if (NanaBox::AntiDetectionProfile::DefaultGaming == Value)
+    {
+        return "default-gaming";
+    }
+    else if (NanaBox::AntiDetectionProfile::Valorant == Value)
+    {
+        return "valorant";
+    }
+    else if (NanaBox::AntiDetectionProfile::EacGeneric == Value)
+    {
+        return "eac-generic";
+    }
+    else if (NanaBox::AntiDetectionProfile::BattlEye == Value)
+    {
+        return "battlEye";
+    }
+    else if (NanaBox::AntiDetectionProfile::Faceit == Value)
+    {
+        return "faceit";
+    }
+    else if (NanaBox::AntiDetectionProfile::ExpertTencent == Value)
+    {
+        return "expert-tencent";
+    }
+    else if (NanaBox::AntiDetectionProfile::EaJavelin == Value)
+    {
+        return "ea-javelin";
+    }
 
     return "vanilla";
 }
@@ -189,6 +217,34 @@ NanaBox::AntiDetectionProfile NanaBox::ToAntiDetectionProfile(
     else if (0 == std::strcmp(RawValue.c_str(), "bare-metal"))
     {
         return NanaBox::AntiDetectionProfile::BareMetal;
+    }
+    else if (0 == std::strcmp(RawValue.c_str(), "default-gaming"))
+    {
+        return NanaBox::AntiDetectionProfile::DefaultGaming;
+    }
+    else if (0 == std::strcmp(RawValue.c_str(), "valorant"))
+    {
+        return NanaBox::AntiDetectionProfile::Valorant;
+    }
+    else if (0 == std::strcmp(RawValue.c_str(), "eac-generic"))
+    {
+        return NanaBox::AntiDetectionProfile::EacGeneric;
+    }
+    else if (0 == std::strcmp(RawValue.c_str(), "battlEye"))
+    {
+        return NanaBox::AntiDetectionProfile::BattlEye;
+    }
+    else if (0 == std::strcmp(RawValue.c_str(), "faceit"))
+    {
+        return NanaBox::AntiDetectionProfile::Faceit;
+    }
+    else if (0 == std::strcmp(RawValue.c_str(), "expert-tencent"))
+    {
+        return NanaBox::AntiDetectionProfile::ExpertTencent;
+    }
+    else if (0 == std::strcmp(RawValue.c_str(), "ea-javelin"))
+    {
+        return NanaBox::AntiDetectionProfile::EaJavelin;
     }
 
     return NanaBox::AntiDetectionProfile::Vanilla;

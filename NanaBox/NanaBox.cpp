@@ -23,9 +23,11 @@
 
 #include "Utils.h"
 #include "NanaBoxResources.h"
+#include "ConfigurationManager.h"
 
 #include <Mile.Helpers.h>
 #include <Mile.Xaml.h>
+#include <algorithm>
 
 namespace
 {
@@ -114,6 +116,10 @@ int WINAPI wWinMain(
         UnresolvedCommandLine);
 
     bool AcquireSponsorEdition = false;
+    bool ShowConfigMode = false;
+    bool SetProfileMode = false;
+    std::wstring CommandArg;
+    std::wstring ProfileArg;
 
     for (auto& Current : OptionsAndParameters)
     {
@@ -121,6 +127,138 @@ int WINAPI wWinMain(
         {
             AcquireSponsorEdition = true;
         }
+        else if (0 == _wcsicmp(Current.first.c_str(), L"show-config"))
+        {
+            ShowConfigMode = true;
+            CommandArg = Current.second;
+        }
+        else if (0 == _wcsicmp(Current.first.c_str(), L"set-profile"))
+        {
+            SetProfileMode = true;
+            CommandArg = Current.second;
+        }
+        else if (0 == _wcsicmp(Current.first.c_str(), L"profile"))
+        {
+            ProfileArg = Current.second;
+        }
+    }
+
+    // CLI Mode: show-config
+    if (ShowConfigMode && !CommandArg.empty())
+    {
+        try
+        {
+            std::wstring ConfigFilePath = ::GetAbsolutePath(CommandArg);
+            std::string ConfigContent = ::ReadAllTextFromUtf8TextFile(ConfigFilePath);
+            NanaBox::VirtualMachineConfiguration Config = 
+                NanaBox::DeserializeConfiguration(ConfigContent);
+
+            // Output configuration to console
+            std::wstring output = L"\nNanaBox VM Configuration: " + CommandArg + L"\n";
+            output += L"======================================\n";
+            output += L"Name: " + Mile::ToWideString(CP_UTF8, Config.Name) + L"\n";
+            output += L"Guest Type: " + Mile::ToWideString(
+                CP_UTF8, NanaBox::FromGuestType(Config.GuestType)) + L"\n";
+            output += L"Processors: " + std::to_wstring(Config.ProcessorCount) + L"\n";
+            output += L"Memory: " + std::to_wstring(Config.MemorySize) + L" MB\n";
+            output += L"Anti-Detection Profile: " + Mile::ToWideString(
+                CP_UTF8, NanaBox::FromAntiDetectionProfile(Config.AntiDetectionProfile)) + L"\n";
+            
+            if (Config.ChipsetInformation.Manufacturer.empty())
+            {
+                output += L"SMBIOS: (Not configured)\n";
+            }
+            else
+            {
+                output += L"SMBIOS: " + Mile::ToWideString(CP_UTF8, 
+                    Config.ChipsetInformation.Manufacturer + " " + 
+                    Config.ChipsetInformation.ProductName) + L"\n";
+            }
+            
+            output += L"CPUID Enabled: " + std::wstring(Config.CpuId.Enabled ? L"Yes" : L"No") + L"\n";
+            output += L"MSR Intercept: " + std::wstring(Config.MsrIntercept.Enabled ? L"Yes" : L"No") + L"\n";
+            output += L"Timing Strategy: " + Mile::ToWideString(
+                CP_UTF8, NanaBox::FromTimingStrategy(Config.Timing.Strategy)) + L"\n";
+            output += L"PCI Layout: " + std::wstring(Config.Pci.Enabled ? L"Enabled" : L"Disabled") + L"\n";
+            
+            ::MessageBoxW(nullptr, output.c_str(), L"NanaBox Configuration", MB_OK | MB_ICONINFORMATION);
+        }
+        catch (...)
+        {
+            winrt::hresult_error Exception = Mile::WinRT::ToHResultError();
+            std::wstring errorMsg = L"Failed to read configuration: " + Exception.message();
+            ::MessageBoxW(nullptr, errorMsg.c_str(), L"Error", MB_OK | MB_ICONERROR);
+        }
+        ::ExitProcess(0);
+    }
+
+    // CLI Mode: set-profile
+    if (SetProfileMode && !CommandArg.empty() && !ProfileArg.empty())
+    {
+        try
+        {
+            std::wstring ConfigFilePath = ::GetAbsolutePath(CommandArg);
+            std::string ConfigContent = ::ReadAllTextFromUtf8TextFile(ConfigFilePath);
+            NanaBox::VirtualMachineConfiguration Config = 
+                NanaBox::DeserializeConfiguration(ConfigContent);
+
+            // Validate and set profile
+            std::wstring profileLower = ProfileArg;
+            std::transform(profileLower.begin(), profileLower.end(), profileLower.begin(), ::towlower);
+            
+            if (profileLower == L"vanilla")
+                Config.AntiDetectionProfile = NanaBox::AntiDetectionProfile::Vanilla;
+            else if (profileLower == L"default-gaming")
+                Config.AntiDetectionProfile = NanaBox::AntiDetectionProfile::DefaultGaming;
+            else if (profileLower == L"valorant")
+                Config.AntiDetectionProfile = NanaBox::AntiDetectionProfile::Valorant;
+            else if (profileLower == L"eac-generic")
+                Config.AntiDetectionProfile = NanaBox::AntiDetectionProfile::EacGeneric;
+            else if (profileLower == L"battleye")
+                Config.AntiDetectionProfile = NanaBox::AntiDetectionProfile::BattlEye;
+            else if (profileLower == L"faceit")
+                Config.AntiDetectionProfile = NanaBox::AntiDetectionProfile::Faceit;
+            else if (profileLower == L"expert-tencent")
+                Config.AntiDetectionProfile = NanaBox::AntiDetectionProfile::ExpertTencent;
+            else if (profileLower == L"ea-javelin")
+                Config.AntiDetectionProfile = NanaBox::AntiDetectionProfile::EaJavelin;
+            else if (profileLower == L"balanced")
+                Config.AntiDetectionProfile = NanaBox::AntiDetectionProfile::Balanced;
+            else if (profileLower == L"bare-metal")
+                Config.AntiDetectionProfile = NanaBox::AntiDetectionProfile::BareMetal;
+            else
+            {
+                std::wstring errorMsg = L"Invalid profile: " + ProfileArg + L"\n\n";
+                errorMsg += L"Valid profiles:\n";
+                errorMsg += L"  - vanilla\n";
+                errorMsg += L"  - default-gaming\n";
+                errorMsg += L"  - valorant\n";
+                errorMsg += L"  - eac-generic\n";
+                errorMsg += L"  - battleye\n";
+                errorMsg += L"  - faceit\n";
+                errorMsg += L"  - expert-tencent\n";
+                errorMsg += L"  - ea-javelin\n";
+                errorMsg += L"  - balanced\n";
+                errorMsg += L"  - bare-metal\n";
+                ::MessageBoxW(nullptr, errorMsg.c_str(), L"Error", MB_OK | MB_ICONERROR);
+                ::ExitProcess(1);
+            }
+
+            std::string NewContent = NanaBox::SerializeConfiguration(Config);
+            ::WriteAllTextToUtf8TextFile(ConfigFilePath, NewContent);
+
+            std::wstring successMsg = L"Profile set to: " + ProfileArg + L"\n\n";
+            successMsg += L"Please restart the VM for changes to take effect.";
+            ::MessageBoxW(nullptr, successMsg.c_str(), L"Success", MB_OK | MB_ICONINFORMATION);
+        }
+        catch (...)
+        {
+            winrt::hresult_error Exception = Mile::WinRT::ToHResultError();
+            std::wstring errorMsg = L"Failed to set profile: " + Exception.message();
+            ::MessageBoxW(nullptr, errorMsg.c_str(), L"Error", MB_OK | MB_ICONERROR);
+            ::ExitProcess(1);
+        }
+        ::ExitProcess(0);
     }
 
     if (AcquireSponsorEdition)

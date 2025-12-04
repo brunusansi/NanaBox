@@ -36,6 +36,7 @@ namespace NanaBox
             CompactVirtualHardDisk = 0x100B,
             Documentation = 0x100C,
             About = 0x100D,
+            AntiDetectionSettings = 0x100E,
         };
     }
 }
@@ -105,6 +106,10 @@ namespace winrt::NanaBox::implementation
             winrt::RoutedEventArgs const& e);
 
         void SponsorButtonClick(
+            winrt::IInspectable const& sender,
+            winrt::RoutedEventArgs const& e);
+
+        void AntiDetectionSettingsButtonClick(
             winrt::IInspectable const& sender,
             winrt::RoutedEventArgs const& e);
 

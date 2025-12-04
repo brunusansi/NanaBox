@@ -87,6 +87,10 @@ winrt::handle ShowCompactVirtualHardDiskDialog(
 winrt::handle ShowResizeVirtualHardDiskDialog(
     _In_ HWND ParentWindowHandle);
 
+winrt::handle ShowAntiDetectionSettingsDialog(
+    _In_ HWND ParentWindowHandle,
+    _In_ std::wstring const* ConfigurationFilePath);
+
 BOOL LaunchDocumentation();
 
 std::string GetCurrentProcessUserStringSid();

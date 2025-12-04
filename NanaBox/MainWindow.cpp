@@ -240,6 +240,12 @@ void NanaBox::MainWindow::OnCommand(
 
         break;
     }
+    case NanaBox::MainWindowCommands::AntiDetectionSettings:
+    {
+        ::ShowAntiDetectionSettingsDialog(this->m_hWnd, &this->m_ConfigurationFilePath);
+
+        break;
+    }
     default:
         break;
     }

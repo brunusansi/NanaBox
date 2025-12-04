@@ -437,6 +437,80 @@ PCI topology configuration for bare-metal-like device layout.
 - AcpiOverride: Enabled with Hyper-V device removal
 - Timing: "strict" for maximum accuracy
 
+## UI Configuration
+
+### Selecting Anti-Detection Profile from UI
+
+NanaBox now provides a graphical interface for selecting and configuring anti-detection profiles:
+
+#### New VM Wizard
+When creating a new VM using the "Create Virtual Machine" button:
+1. The wizard will automatically set the `AntiDetectionProfile` to `default-gaming`
+2. This provides basic anti-detection features suitable for most gaming scenarios
+
+#### VM Settings - Anti-Detection Tab
+To change the anti-detection profile for an existing VM:
+1. Launch your VM configuration in NanaBox
+2. Click the **Anti-Detection Settings** button (shield icon) in the toolbar
+3. Select your desired profile from the dropdown:
+   - **Vanilla** - No anti-detection (development/testing)
+   - **Default Gaming** - Basic gaming anti-detection
+   - **Valorant** - Optimized for Riot Vanguard
+   - **EAC Generic** - Easy Anti-Cheat support
+   - **BattlEye** - BattlEye anti-cheat support
+   - **FaceIT** - FaceIT anti-cheat support
+   - **Expert Tencent** - Tencent ACE anti-cheat
+   - **EA Javelin** - EA Javelin anti-cheat
+   - **Balanced** - Moderate anti-detection
+   - **Bare Metal** - Maximum anti-detection
+4. Review the read-only summary showing current configuration
+5. Click **Save** to apply changes
+6. **Restart the VM** for changes to take full effect
+
+The Anti-Detection Settings dialog also displays a summary of:
+- Current SMBIOS configuration
+- CPUID spoofing status
+- MSR interception status
+- Timing normalization mode
+- PCI layout configuration
+
+## CLI Configuration
+
+### Show VM Configuration
+To display the current anti-detection profile and configuration:
+
+```powershell
+NanaBox.exe --show-config=path\to\vm.7b
+```
+
+This displays:
+- VM name and guest type
+- Processor and memory allocation
+- Anti-detection profile
+- SMBIOS configuration status
+- CPUID, MSR, Timing, and PCI settings
+
+### Set Anti-Detection Profile
+To change the anti-detection profile via CLI:
+
+```powershell
+NanaBox.exe --set-profile=path\to\vm.7b --profile=valorant
+```
+
+**Valid profile names:**
+- `vanilla` - No anti-detection
+- `default-gaming` - Basic gaming profile
+- `valorant` - Riot Vanguard optimized
+- `eac-generic` - Easy Anti-Cheat
+- `battleye` - BattlEye support
+- `faceit` - FaceIT support
+- `expert-tencent` - Tencent ACE
+- `ea-javelin` - EA Javelin
+- `balanced` - Moderate anti-detection
+- `bare-metal` - Maximum anti-detection
+
+**Note:** Changes require a VM restart to take effect.
+
 ## See Also
 
 - [Configuration Reference](../Documents/ConfigurationReference.md) - Full field documentation
