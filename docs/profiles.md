@@ -8,11 +8,60 @@ The profile system provides pre-configured anti-detection templates optimized fo
 
 ## Profile Selection
 
-Use the `AntiDetectionProfile` field to select a high-level strategy:
+### Available Profiles
 
-- **vanilla**: No anti-detection (default)
+NanaBox provides the following anti-detection profiles:
+
+- **vanilla**: No anti-detection (default) - Use for development and testing
+- **default-gaming**: Basic gaming anti-detection - Good starting point for most games
+- **valorant**: Riot Vanguard optimized - Maximum stealth for Valorant
+- **eac-generic**: Easy Anti-Cheat support - General EAC protection
+- **battleye**: BattlEye anti-cheat - Optimized for BattlEye games
+- **faceit**: FaceIT anti-cheat - CS:GO, CS2, and FaceIT platform
+- **expert-tencent**: Tencent ACE - Chinese anti-cheat systems
+- **ea-javelin**: EA Javelin - EA games with Javelin protection
 - **balanced**: Moderate anti-detection with good performance
 - **bare-metal**: Maximum anti-detection effort
+
+### Selecting Profiles
+
+#### Via UI (New VM Wizard)
+When creating a new VM:
+1. Click "Create Virtual Machine" in NanaBox
+2. The wizard automatically sets `default-gaming` profile
+3. Modify the profile later using the Anti-Detection Settings dialog
+
+#### Via UI (Settings Dialog)
+For existing VMs:
+1. Launch your VM in NanaBox
+2. Click the **Anti-Detection Settings** button (shield icon) in the toolbar
+3. Select your desired profile from the dropdown
+4. Click **Save**
+5. Restart the VM for changes to take effect
+
+#### Via CLI
+To view current profile:
+```powershell
+NanaBox.exe --show-config=path\to\vm.7b
+```
+
+To set a profile:
+```powershell
+NanaBox.exe --set-profile=path\to\vm.7b --profile=valorant
+```
+
+**Note:** Changes made via CLI require a VM restart to take effect.
+
+#### Via Manual Configuration
+Edit the VM's `.7b` configuration file and set the `AntiDetectionProfile` field:
+```json
+{
+  "NanaBox": {
+    "AntiDetectionProfile": "valorant",
+    ...
+  }
+}
+```
 
 Additionally, use the `Metadata.ProfileId` field to identify specific use-case profiles.
 
