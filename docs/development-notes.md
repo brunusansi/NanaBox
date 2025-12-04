@@ -25,10 +25,7 @@ NanaBox/
 │   ├── profile-valorant.json
 │   ├── profile-roblox.json
 │   ├── profile-pubg.json
-│   ├── profile-ea-ac.json
-│   ├── cloud-aws.json
-│   ├── cloud-azure.json
-│   └── cloud-gcp.json
+│   └── profile-ea-ac.json
 ├── scripts/                          # Automation scripts
 │   ├── host/                         # Host-side automation
 │   └── guest/                        # Guest-side tools

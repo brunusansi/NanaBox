@@ -120,9 +120,17 @@ Future phases will add per-game/anti-cheat profiles (e.g., "valorant", "roblox",
 **Status**: Not Started
 
 **Goals**:
-- Complete profile system
-- One-click anti-cheat profiles
+- Complete game/anti-cheat profile system
+- One-click profiles for major anti-cheat systems (Vanguard, EAC, BattlEye, FACEIT, Tencent ACE, EA Javelin, etc.)
+- Profile auto-detection and switching
 - Full automation pipeline
+
+**Profile Focus**:
+- Game-specific profiles: `valorant`, `roblox`, `pubg`, `ea-ac`, etc.
+- Anti-cheat generic profiles: `eac-generic`, `battleye`, `faceit`, `expert-tencent`, `ea-javelin`, etc.
+- Custom user profiles: `my-custom-fps`, `default-gaming`, etc.
+
+**Note**: Cloud provider profiles (AWS/Azure/GCP) are intentionally out of scope. This project focuses exclusively on gaming and anti-cheat use cases.
 
 ## References
 
