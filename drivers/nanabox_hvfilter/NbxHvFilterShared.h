@@ -49,6 +49,13 @@
 #define NBX_MAX_PROFILE_NAME_LENGTH     64
 #define NBX_MAX_STRING_LENGTH           256
 #define NBX_MAX_VENDOR_STRING_LENGTH    13  // "GenuineIntel" + null terminator
+#define NBX_CPU_VENDOR_STRING_LENGTH    12  // Length without null terminator
+
+//
+// Known CPU vendor strings
+//
+#define NBX_VENDOR_INTEL                "GenuineIntel"
+#define NBX_VENDOR_AMD                  "AuthenticAMD"
 
 //
 // Profile flags

@@ -72,15 +72,16 @@ NbxValidateCpuIdPolicy(
             }
         }
 
-        // Vendor string should be "GenuineIntel" (12 chars) or "AuthenticAMD" (12 chars)
-        if (length != 12) {
-            NBX_WARNING("NbxValidateCpuIdPolicy: Invalid vendor string length %zu (expected 12)\n", length);
+        // Vendor string should be exactly NBX_CPU_VENDOR_STRING_LENGTH chars
+        if (length != NBX_CPU_VENDOR_STRING_LENGTH) {
+            NBX_WARNING("NbxValidateCpuIdPolicy: Invalid vendor string length %zu (expected %d)\n", 
+                       length, NBX_CPU_VENDOR_STRING_LENGTH);
             return FALSE;
         }
 
         // Check for known vendor strings
-        if (RtlCompareMemory(Policy->VendorString, "GenuineIntel", 12) != 12 &&
-            RtlCompareMemory(Policy->VendorString, "AuthenticAMD", 12) != 12) {
+        if (RtlCompareMemory(Policy->VendorString, NBX_VENDOR_INTEL, NBX_CPU_VENDOR_STRING_LENGTH) != NBX_CPU_VENDOR_STRING_LENGTH &&
+            RtlCompareMemory(Policy->VendorString, NBX_VENDOR_AMD, NBX_CPU_VENDOR_STRING_LENGTH) != NBX_CPU_VENDOR_STRING_LENGTH) {
             NBX_WARNING("NbxValidateCpuIdPolicy: Unknown vendor string '%s'\n", Policy->VendorString);
             // Allow it but warn
         }

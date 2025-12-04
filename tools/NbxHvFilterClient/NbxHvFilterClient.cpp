@@ -11,6 +11,14 @@
 #include <string.h>
 #include "../../drivers/nanabox_hvfilter/NbxHvFilterShared.h"
 
+//
+// Predefined profile names
+//
+#define PROFILE_ROBLOX          "roblox"
+#define PROFILE_VALORANT        "valorant"
+#define PROFILE_EXPERT_TENCENT  "expert-tencent"
+#define PROFILE_TENCENT_ACE     "tencent-ace"
+
 /**
  * @brief Open the driver device
  * 
@@ -70,7 +78,8 @@ static BOOL SetProfileWithPolicies(
         input.CpuIdPolicy.Enabled = (flags & NBX_PROFILE_FLAG_CPUID) ? TRUE : FALSE;
         input.CpuIdPolicy.HideHypervisor = input.CpuIdPolicy.Enabled;
         input.CpuIdPolicy.MaskVirtualizationFeatures = input.CpuIdPolicy.Enabled;
-        input.CpuIdPolicy.VendorString[0] = '\0';  // Empty means use host vendor
+        // Empty vendor string indicates "use host CPU vendor" - no override
+        input.CpuIdPolicy.VendorString[0] = '\0';
     }
 
     // Copy MSR policy if provided
@@ -288,42 +297,42 @@ static BOOL SetPredefinedProfile(HANDLE hDevice, const char* profileName)
     NBX_MSR_POLICY msrPolicy = { 0 };
     DWORD flags = 0;
 
-    if (_stricmp(profileName, "roblox") == 0) {
+    if (_stricmp(profileName, PROFILE_ROBLOX) == 0) {
         // Roblox (Byfron) profile - balanced anti-detection
         flags = NBX_PROFILE_FLAG_CPUID | NBX_PROFILE_FLAG_MSR_INTERCEPT;
         
         cpuidPolicy.Enabled = TRUE;
         cpuidPolicy.HideHypervisor = TRUE;
         cpuidPolicy.MaskVirtualizationFeatures = TRUE;
-        strncpy_s(cpuidPolicy.VendorString, sizeof(cpuidPolicy.VendorString), "AuthenticAMD", _TRUNCATE);
+        strncpy_s(cpuidPolicy.VendorString, sizeof(cpuidPolicy.VendorString), NBX_VENDOR_AMD, _TRUNCATE);
 
         msrPolicy.Enabled = TRUE;
         msrPolicy.HyperVMsrMode = NBX_MSR_MODE_ZERO;
 
         printf("[INFO] Using Roblox (Byfron) profile - balanced anti-detection\n");
     }
-    else if (_stricmp(profileName, "valorant") == 0) {
+    else if (_stricmp(profileName, PROFILE_VALORANT) == 0) {
         // Valorant (Riot Vanguard) profile - bare-metal anti-detection
         flags = NBX_PROFILE_FLAG_CPUID | NBX_PROFILE_FLAG_MSR_INTERCEPT;
         
         cpuidPolicy.Enabled = TRUE;
         cpuidPolicy.HideHypervisor = TRUE;
         cpuidPolicy.MaskVirtualizationFeatures = TRUE;
-        strncpy_s(cpuidPolicy.VendorString, sizeof(cpuidPolicy.VendorString), "GenuineIntel", _TRUNCATE);
+        strncpy_s(cpuidPolicy.VendorString, sizeof(cpuidPolicy.VendorString), NBX_VENDOR_INTEL, _TRUNCATE);
 
         msrPolicy.Enabled = TRUE;
         msrPolicy.HyperVMsrMode = NBX_MSR_MODE_ZERO;
 
         printf("[INFO] Using Valorant (Riot Vanguard) profile - bare-metal anti-detection\n");
     }
-    else if (_stricmp(profileName, "expert-tencent") == 0 || _stricmp(profileName, "tencent-ace") == 0) {
+    else if (_stricmp(profileName, PROFILE_EXPERT_TENCENT) == 0 || _stricmp(profileName, PROFILE_TENCENT_ACE) == 0) {
         // Tencent ACE profile - bare-metal anti-detection
         flags = NBX_PROFILE_FLAG_CPUID | NBX_PROFILE_FLAG_MSR_INTERCEPT;
         
         cpuidPolicy.Enabled = TRUE;
         cpuidPolicy.HideHypervisor = TRUE;
         cpuidPolicy.MaskVirtualizationFeatures = TRUE;
-        strncpy_s(cpuidPolicy.VendorString, sizeof(cpuidPolicy.VendorString), "GenuineIntel", _TRUNCATE);
+        strncpy_s(cpuidPolicy.VendorString, sizeof(cpuidPolicy.VendorString), NBX_VENDOR_INTEL, _TRUNCATE);
 
         msrPolicy.Enabled = TRUE;
         msrPolicy.HyperVMsrMode = NBX_MSR_MODE_ZERO;
@@ -332,7 +341,7 @@ static BOOL SetPredefinedProfile(HANDLE hDevice, const char* profileName)
     }
     else {
         printf("[ERROR] Unknown predefined profile: %s\n", profileName);
-        printf("[INFO] Available profiles: roblox, valorant, expert-tencent\n");
+        printf("[INFO] Available profiles: %s, %s, %s\n", PROFILE_ROBLOX, PROFILE_VALORANT, PROFILE_EXPERT_TENCENT);
         return FALSE;
     }
 
@@ -360,9 +369,9 @@ static void PrintUsage()
     printf("  clear                   Clear active profile\n");
     printf("\n");
     printf("Predefined Profiles (Phase 3B):\n");
-    printf("  roblox                  Roblox (Byfron) - AMD CPU, balanced\n");
-    printf("  valorant                Valorant (Vanguard) - Intel CPU, bare-metal\n");
-    printf("  expert-tencent          Tencent ACE - Intel CPU, bare-metal\n");
+    printf("  %-20s  Roblox (Byfron) - AMD CPU, balanced\n", PROFILE_ROBLOX);
+    printf("  %-20s  Valorant (Vanguard) - Intel CPU, bare-metal\n", PROFILE_VALORANT);
+    printf("  %-20s  Tencent ACE - Intel CPU, bare-metal\n", PROFILE_EXPERT_TENCENT);
     printf("\n");
     printf("Custom Flags (hexadecimal bitmask):\n");
     printf("  0x%08X  CPUID\n", NBX_PROFILE_FLAG_CPUID);
@@ -371,9 +380,9 @@ static void PrintUsage()
     printf("  0x%08X  PCI\n", NBX_PROFILE_FLAG_PCI);
     printf("\n");
     printf("Examples:\n");
-    printf("  NbxHvFilterClient.exe set roblox\n");
-    printf("  NbxHvFilterClient.exe set valorant\n");
-    printf("  NbxHvFilterClient.exe set expert-tencent\n");
+    printf("  NbxHvFilterClient.exe set %s\n", PROFILE_ROBLOX);
+    printf("  NbxHvFilterClient.exe set %s\n", PROFILE_VALORANT);
+    printf("  NbxHvFilterClient.exe set %s\n", PROFILE_EXPERT_TENCENT);
     printf("  NbxHvFilterClient.exe set CustomProfile 0x00000003\n");
     printf("  NbxHvFilterClient.exe status\n");
     printf("  NbxHvFilterClient.exe clear\n");
@@ -419,10 +428,10 @@ int main(int argc, char* argv[])
             const char* profileName = argv[2];
             
             // Check if this is a predefined profile
-            if (_stricmp(profileName, "roblox") == 0 ||
-                _stricmp(profileName, "valorant") == 0 ||
-                _stricmp(profileName, "expert-tencent") == 0 ||
-                _stricmp(profileName, "tencent-ace") == 0) {
+            if (_stricmp(profileName, PROFILE_ROBLOX) == 0 ||
+                _stricmp(profileName, PROFILE_VALORANT) == 0 ||
+                _stricmp(profileName, PROFILE_EXPERT_TENCENT) == 0 ||
+                _stricmp(profileName, PROFILE_TENCENT_ACE) == 0) {
                 // Use predefined profile with CPUID/MSR policies
                 if (!SetPredefinedProfile(hDevice, profileName)) {
                     exitCode = 1;

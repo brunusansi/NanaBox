@@ -41,9 +41,14 @@ NbxHandleSetProfile(
     profileInput = (PNBX_SET_PROFILE_INPUT)InputBuffer;
 
     //
-    // Validate profile name is null-terminated
+    // Ensure profile name is null-terminated safely
+    // This guarantees a null terminator exists even if the input was full
     //
     profileInput->ProfileName[NBX_MAX_PROFILE_NAME_LENGTH - 1] = '\0';
+    
+    //
+    // Ensure vendor string is null-terminated safely
+    //
     profileInput->CpuIdPolicy.VendorString[NBX_MAX_VENDOR_STRING_LENGTH - 1] = '\0';
 
     NBX_INFO("NbxHandleSetProfile: ProfileName='%s', Flags=0x%08X\n",
