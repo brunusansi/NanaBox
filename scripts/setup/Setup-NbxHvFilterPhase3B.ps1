@@ -485,7 +485,7 @@ function Install-Driver {
         } else {
             Write-Info "Creating driver service..."
             $servicePath = "`"$destPath`""
-            $scResult = & sc.exe create $ServiceName type= kernel start= demand error= normal binPath= $servicePath DisplayName= $ServiceDisplayName 2>&1
+            $scResult = & sc.exe create $ServiceName type= kernel start= demand error= normal binPath= $servicePath DisplayName= "`"$ServiceDisplayName`"" 2>&1
             
             if ($LASTEXITCODE -eq 0) {
                 Write-Success "Driver service created successfully"
