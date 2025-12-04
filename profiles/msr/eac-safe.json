@@ -1,0 +1,51 @@
+{
+  "name": "eac-safe",
+  "description": "Easy Anti-Cheat compatible MSR configuration",
+  "rules": [
+    {
+      "msr": "0x40000000",
+      "mode": "zero",
+      "comment": "Hyper-V interface identification"
+    },
+    {
+      "msr": "0x40000001",
+      "mode": "zero",
+      "comment": "Hyper-V version"
+    },
+    {
+      "msr": "0x40000002",
+      "mode": "zero",
+      "comment": "Hyper-V features"
+    },
+    {
+      "msr": "0x40000003",
+      "mode": "zero",
+      "comment": "Hyper-V enlightenment"
+    },
+    {
+      "msr": "0x40000080",
+      "mode": "zero",
+      "comment": "Hyper-V guest OS ID"
+    },
+    {
+      "msr": "0x10",
+      "mode": "mirror",
+      "comment": "TSC - mirror host"
+    }
+  ],
+  "antiCheatNotes": {
+    "target": "Easy Anti-Cheat (EAC)",
+    "games": ["Fortnite", "Apex Legends", "Rust", "Dead by Daylight"],
+    "criticality": "medium-high",
+    "requirements": [
+      "Hide Hyper-V MSRs",
+      "EAC checks MSR space but less aggressively than Vanguard",
+      "Focus on blocking obvious Hyper-V indicators"
+    ]
+  },
+  "notes": [
+    "Balanced MSR configuration for Easy Anti-Cheat",
+    "Blocks main Hyper-V MSRs",
+    "Less strict than Vanguard profile"
+  ]
+}

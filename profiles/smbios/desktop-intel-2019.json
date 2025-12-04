@@ -1,0 +1,29 @@
+{
+  "name": "desktop-intel-2019",
+  "description": "Intel Z390 chipset desktop (2019) - Common gaming/workstation build",
+  "vendor": "Gigabyte Technology Co., Ltd.",
+  "product": "Z390 AORUS PRO",
+  "version": "Default string",
+  "serialNumber": "Default string",
+  "skuNumber": "Default string",
+  "family": "Default string",
+  "baseboard": {
+    "manufacturer": "Gigabyte Technology Co., Ltd.",
+    "product": "Z390 AORUS PRO-CF",
+    "version": "x.x",
+    "serialNumber": "Default string"
+  },
+  "chassis": {
+    "type": "Desktop",
+    "serialNumber": "Default string"
+  },
+  "uuid": "03000200-0400-0500-0006-000700080009",
+  "oemStrings": [
+    "Default string"
+  ],
+  "notes": [
+    "Replace 'Default string' with unique generated values per VM",
+    "This template represents a common Intel Z390 desktop from 2019",
+    "Compatible with: Intel Core i7-9700K, i9-9900K"
+  ]
+}

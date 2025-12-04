@@ -161,90 +161,188 @@ namespace NanaBox
     };
 
     /// <summary>
-    /// CPUID spoofing configuration
-    /// Phase 1: Configuration schema only (reserved for future use)
-    /// Phase 3: Implementation with guest-side driver
+    /// Phase 2: SMBIOS baseboard configuration
+    /// </summary>
+    struct SmbiosBaseboardConfiguration
+    {
+        std::string Manufacturer;
+        std::string Product;
+        std::string Version;
+        std::string SerialNumber;
+    };
+
+    /// <summary>
+    /// Phase 2: SMBIOS chassis configuration
+    /// </summary>
+    struct SmbiosChassisConfiguration
+    {
+        std::string Type;           // e.g., "Desktop", "Laptop", "Tower"
+        std::string SerialNumber;
+    };
+
+    /// <summary>
+    /// Phase 2: Extended SMBIOS configuration
+    /// </summary>
+    struct SmbiosConfiguration
+    {
+        bool Enabled = false;
+        std::string Vendor;
+        std::string Product;
+        std::string Version;
+        std::string SerialNumber;
+        std::string SkuNumber;
+        std::string Family;
+        SmbiosBaseboardConfiguration Baseboard;
+        SmbiosChassisConfiguration Chassis;
+        std::string Uuid;
+        std::vector<std::string> OemStrings;
+        std::string Template;       // e.g., "desktop-intel-2019", "desktop-amd-2021"
+    };
+
+    /// <summary>
+    /// Phase 2: ACPI configuration
+    /// </summary>
+    struct AcpiConfiguration
+    {
+        bool Enabled = false;
+        std::string OemId;
+        std::string OemTableId;
+        std::vector<std::string> OverrideTables;    // Paths to custom DSDT/SSDT blobs
+        bool FixHyperVSignatures = false;
+        bool SpoofBattery = false;
+        bool SpoofDock = false;
+    };
+
+    /// <summary>
+    /// Phase 3: CPUID leaf override configuration
+    /// </summary>
+    struct CpuIdLeafOverride
+    {
+        std::uint32_t Leaf;
+        std::uint32_t Subleaf;
+        std::string Eax;            // Can be hex value or "auto" or "mask:0x..."
+        std::string Ebx;
+        std::string Ecx;
+        std::string Edx;
+    };
+
+    /// <summary>
+    /// Phase 3: Extended CPUID spoofing configuration
     /// </summary>
     struct CpuIdConfiguration
     {
-        bool Enabled = false;                        // Enable CPUID spoofing
-        bool HideHypervisor = false;                 // TODO(Phase3): Hide hypervisor present bit
-        std::string VendorString;                    // TODO(Phase3): CPU vendor string ("GenuineIntel", "AuthenticAMD")
-        bool MaskVirtualizationFeatures = false;     // TODO(Phase3): Hide VMX/SVM features
+        bool Enabled = false;
+        bool HideHypervisorBit = false;
+        std::string VendorId;                       // "GenuineIntel", "AuthenticAMD"
+        std::string BrandString;
+        std::map<std::string, std::string> FeatureMasks;    // e.g., {"ecx": "0xFFFFFFFF", "edx": "0xFFFFFFFF"}
+        std::vector<CpuIdLeafOverride> LeafOverrides;
+        std::vector<std::string> Templates;         // e.g., "intel-8c-2020", "amd-8c-2022"
     };
 
     /// <summary>
-    /// MSR (Model-Specific Register) interception configuration
-    /// Phase 1: Configuration schema only (reserved for future use)
-    /// Phase 3: Implementation with HCS API and/or guest-side driver
+    /// Phase 3: MSR rule configuration
+    /// </summary>
+    struct MsrRule
+    {
+        std::string Msr;                            // MSR address (hex)
+        std::string Mode;                           // "mirror", "fake", "zero"
+        std::string FakeValue;                      // Optional fake value for "fake" mode
+    };
+
+    /// <summary>
+    /// Phase 3: Extended MSR (Model-Specific Register) interception configuration
     /// </summary>
     struct MsrInterceptConfiguration
     {
-        bool Enabled = false;                        // Enable MSR interception
-        bool BlockHyperVMsrs = false;                // TODO(Phase3): Block access to Hyper-V MSR range
-        bool NormalizeTSC = false;                   // TODO(Phase4): Normalize Time Stamp Counter behavior
+        bool Enabled = false;
+        std::vector<MsrRule> Rules;
+        std::string Template;                       // e.g., "default-gaming-safe", "valorant-safe", "eac-safe"
     };
 
     /// <summary>
-    /// ACPI table override configuration
-    /// Phase 1: Configuration schema only (reserved for future use)
-    /// Phase 4: Implementation with EFI helper and table injection
+    /// Phase 4: ACPI table override configuration (legacy - use AcpiConfiguration instead)
+    /// Kept for backward compatibility with Phase 1 configs
     /// </summary>
     struct AcpiOverrideConfiguration
     {
-        bool Enabled = false;                        // Enable ACPI overrides
-        bool RemoveHyperVDevices = false;            // TODO(Phase4): Remove Hyper-V ACPI devices
-        std::string CustomDSDT;                      // TODO(Phase4): Path to custom DSDT table file
+        bool Enabled = false;
+        bool RemoveHyperVDevices = false;
+        std::string CustomDSDT;
     };
 
     /// <summary>
-    /// Timing normalization strategy
-    /// Phase 1: Configuration schema only (reserved for future use)
-    /// Phase 4: Implementation with timing adjustments
+    /// Phase 4: Timing normalization mode
     /// </summary>
-    enum class TimingStrategy : std::int32_t
+    enum class TimingMode : std::int32_t
     {
         Off = 0,        // No timing normalization
         Relaxed = 1,    // Basic timing adjustments
-        Strict = 2,     // Maximum timing accuracy, may impact performance
+        Balanced = 2,   // Balanced timing normalization
+        Strict = 3,     // Maximum timing accuracy, may impact performance
     };
 
     /// <summary>
-    /// Timing normalization configuration
-    /// Phase 1: Configuration schema only (reserved for future use)
-    /// Phase 4: Implementation for TSC, APIC, HPET normalization
+    /// Phase 4: TSC configuration
+    /// </summary>
+    struct TscConfiguration
+    {
+        bool NormalizeFrequency = false;
+        std::uint32_t TargetFrequencyMHz = 0;
+        std::string JitterModel;                    // "none", "low-pc-like", "medium"
+    };
+
+    /// <summary>
+    /// Phase 4: QPC configuration
+    /// </summary>
+    struct QpcConfiguration
+    {
+        std::string Backend;                        // "default", "tsc", "hpet"
+        bool StabilityHints = false;
+    };
+
+    /// <summary>
+    /// Phase 4: Extended timing normalization configuration
     /// </summary>
     struct TimingConfiguration
     {
-        TimingStrategy Strategy = TimingStrategy::Off;  // Timing normalization strategy
-        bool NormalizeTSC = false;                      // TODO(Phase4): Normalize Time Stamp Counter
-        bool NormalizeAPIC = false;                     // TODO(Phase4): Normalize APIC timer
-        bool NormalizeHPET = false;                     // TODO(Phase4): Normalize High Precision Event Timer
+        bool Enabled = false;
+        TimingMode Mode = TimingMode::Off;
+        TscConfiguration Tsc;
+        QpcConfiguration Qpc;
     };
 
     /// <summary>
-    /// PCI device configuration entry
-    /// Phase 1: Configuration schema only (reserved for future use)
-    /// Phase 4: Implementation for bare-metal-like PCI topology
+    /// Phase 4: Legacy timing strategy (backward compatibility)
+    /// </summary>
+    enum class TimingStrategy : std::int32_t
+    {
+        Off = 0,
+        Relaxed = 1,
+        Strict = 2,
+    };
+
+    /// <summary>
+    /// Phase 4: PCI device configuration entry
     /// </summary>
     struct PciDeviceConfiguration
     {
-        std::string DeviceType;                      // TODO(Phase4): "GPU", "NIC", "Storage", etc.
-        std::string VendorId;                        // TODO(Phase4): PCI vendor ID (hex)
-        std::string DeviceId;                        // TODO(Phase4): PCI device ID (hex)
-        std::string SubsystemVendorId;               // TODO(Phase4): Subsystem vendor ID (hex)
-        std::string SubsystemId;                     // TODO(Phase4): Subsystem ID (hex)
+        std::string Class;                          // Device class
+        std::string VendorId;                       // PCI vendor ID (hex)
+        std::string DeviceId;                       // PCI device ID (hex)
+        std::string SubsystemVendorId;              // Subsystem vendor ID (hex)
+        std::string SubsystemId;                    // Subsystem ID (hex)
+        std::string Description;                    // Human-readable description
     };
 
     /// <summary>
-    /// PCI topology configuration
-    /// Phase 1: Configuration schema only (reserved for future use)
-    /// Phase 4: Implementation for realistic PCI device layout
+    /// Phase 4: Extended PCI topology configuration
     /// </summary>
     struct PciConfiguration
     {
-        bool Enabled = false;                        // Enable PCI topology customization
-        std::vector<PciDeviceConfiguration> Devices; // TODO(Phase4): Custom PCI devices
+        bool Enabled = false;
+        std::string LayoutTemplate;                 // e.g., "desktop-single-gpu-2021"
+        std::vector<PciDeviceConfiguration> Devices;
     };
 
     /// <summary>
@@ -287,15 +385,20 @@ namespace NanaBox
         std::vector<Plan9ShareConfiguration> Plan9Shares;
         
         // Anti-Detection Edition fields (Phase 1+)
-        // Note: ChipsetInformation already serves as SMBIOS configuration
+        // Note: ChipsetInformation already serves as basic SMBIOS configuration
         VirtualMachineMetadata Metadata;
         AntiDetectionProfile AntiDetectionProfile = AntiDetectionProfile::Vanilla;
-        CpuIdConfiguration CpuId;
-        MsrInterceptConfiguration MsrIntercept;
-        AcpiOverrideConfiguration AcpiOverride;
-        TimingConfiguration Timing;
-        PciConfiguration Pci;
+        
+        // Phase 2+ Extended Anti-Detection fields
+        SmbiosConfiguration Smbios;                 // Phase 2: Extended SMBIOS configuration
+        AcpiConfiguration Acpi;                     // Phase 2: ACPI configuration
+        CpuIdConfiguration CpuId;                   // Phase 3: Extended CPUID configuration
+        MsrInterceptConfiguration MsrIntercept;     // Phase 3: Extended MSR configuration
+        AcpiOverrideConfiguration AcpiOverride;     // Phase 1 legacy (kept for compatibility)
+        TimingConfiguration Timing;                 // Phase 4: Timing normalization
+        PciConfiguration Pci;                       // Phase 4: PCI topology
     };
 }
+
 
 #endif // !NANABOX_CONFIGURATION_SPECIFICATION

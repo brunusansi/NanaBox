@@ -1,0 +1,68 @@
+{
+  "name": "valorant-safe",
+  "description": "Riot Vanguard compatible MSR configuration",
+  "rules": [
+    {
+      "msr": "0x40000000",
+      "mode": "zero",
+      "comment": "Hyper-V interface - CRITICAL for Vanguard"
+    },
+    {
+      "msr": "0x40000001",
+      "mode": "zero",
+      "comment": "Hyper-V version - CRITICAL"
+    },
+    {
+      "msr": "0x40000002",
+      "mode": "zero",
+      "comment": "Hyper-V features - CRITICAL"
+    },
+    {
+      "msr": "0x40000003",
+      "mode": "zero",
+      "comment": "Hyper-V enlightenment - CRITICAL"
+    },
+    {
+      "msr": "0x40000080",
+      "mode": "zero",
+      "comment": "Hyper-V guest OS ID"
+    },
+    {
+      "msr": "0x40000081",
+      "mode": "zero",
+      "comment": "Hyper-V hypercall"
+    },
+    {
+      "msr": "0x40000082",
+      "mode": "zero",
+      "comment": "Hyper-V VP index"
+    },
+    {
+      "msr": "0x10",
+      "mode": "mirror",
+      "comment": "TSC - mirror host value"
+    },
+    {
+      "msr": "0x1A",
+      "mode": "mirror",
+      "comment": "IA32_MISC_ENABLE - mirror host"
+    }
+  ],
+  "antiCheatNotes": {
+    "target": "Riot Vanguard",
+    "game": "Valorant",
+    "criticality": "critical",
+    "requirements": [
+      "MUST hide all Hyper-V MSRs (0x40000000-0x400000FF)",
+      "Vanguard actively scans MSR space at kernel level",
+      "Any Hyper-V MSR access reveals virtualization",
+      "TSC must be stable and consistent"
+    ]
+  },
+  "notes": [
+    "Strict MSR blocking for Riot Vanguard",
+    "All Hyper-V MSRs return zero",
+    "TSC and performance counters are mirrored from host",
+    "CRITICAL: This is one of Vanguard's primary detection vectors"
+  ]
+}

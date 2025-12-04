@@ -1,0 +1,45 @@
+{
+  "name": "amd-8c-2022",
+  "description": "AMD Ryzen 7 5800X3D (Zen 3, 8C/16T)",
+  "vendorId": "AuthenticAMD",
+  "brandString": "AMD Ryzen 7 5800X3D 8-Core Processor",
+  "hideHypervisorBit": true,
+  "featureMasks": {
+    "ecx": "0xFFFFFFFF",
+    "edx": "0xFFFFFFFF"
+  },
+  "leafOverrides": [
+    {
+      "leaf": 1,
+      "subleaf": 0,
+      "eax": "auto",
+      "ebx": "auto",
+      "ecx": "mask:0x7FFFFFFF",
+      "edx": "auto",
+      "comment": "Hide hypervisor bit in ECX[31]"
+    },
+    {
+      "leaf": 7,
+      "subleaf": 0,
+      "eax": "auto",
+      "ebx": "auto",
+      "ecx": "auto",
+      "edx": "auto",
+      "comment": "Extended features"
+    },
+    {
+      "leaf": 2147483649,
+      "subleaf": 0,
+      "eax": "auto",
+      "ebx": "auto",
+      "ecx": "auto",
+      "edx": "auto",
+      "comment": "AMD extended features"
+    }
+  ],
+  "notes": [
+    "This profile emulates AMD Ryzen 7 5800X3D (Zen 3 with 3D V-Cache)",
+    "8 cores, 16 threads, 3.4 GHz base, 4.5 GHz boost",
+    "Excellent for gaming anti-cheats, 3D V-Cache for enhanced performance"
+  ]
+}

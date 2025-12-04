@@ -1,0 +1,29 @@
+{
+  "name": "desktop-amd-2022",
+  "description": "AMD X570 chipset desktop (2022) - High-end gaming",
+  "vendor": "MSI",
+  "product": "MAG X570 TOMAHAWK WIFI (MS-7C84)",
+  "version": "1.0",
+  "serialNumber": "K8096800000",
+  "skuNumber": "To be filled by O.E.M.",
+  "family": "To be filled by O.E.M.",
+  "baseboard": {
+    "manufacturer": "Micro-Star International Co., Ltd.",
+    "product": "MAG X570 TOMAHAWK WIFI (MS-7C84)",
+    "version": "1.0",
+    "serialNumber": "K80968001234"
+  },
+  "chassis": {
+    "type": "Desktop",
+    "serialNumber": "To be filled by O.E.M."
+  },
+  "uuid": "00020003-0004-0005-0006-000700080009",
+  "oemStrings": [
+    "Default string"
+  ],
+  "notes": [
+    "Replace O.E.M. strings with unique values per VM",
+    "This template represents AMD X570 desktop from 2022",
+    "Compatible with: AMD Ryzen 7 5800X3D, Ryzen 9 5900X, Ryzen 9 5950X"
+  ]
+}
