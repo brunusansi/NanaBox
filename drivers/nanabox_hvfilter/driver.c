@@ -40,6 +40,8 @@ DriverEntry(
     //
     RtlZeroMemory(&g_DriverContext, sizeof(g_DriverContext));
     g_DriverContext.IsActive = FALSE;
+    g_DriverContext.CpuIdActive = FALSE;
+    g_DriverContext.MsrActive = FALSE;
     RtlCopyMemory(g_DriverContext.ActiveProfileName, "None", sizeof("None"));
 
     //
@@ -75,6 +77,22 @@ DriverUnload(
 )
 {
     NBX_INFO("DriverUnload: Unloading driver\n");
+
+    //
+    // Deactivate CPUID interception if active
+    //
+    if (g_DriverContext.CpuIdActive) {
+        NBX_INFO("DriverUnload: Deactivating CPUID interception\n");
+        NbxDeactivateCpuIdInterception();
+    }
+
+    //
+    // Deactivate MSR interception if active
+    //
+    if (g_DriverContext.MsrActive) {
+        NBX_INFO("DriverUnload: Deactivating MSR interception\n");
+        NbxDeactivateMsrInterception();
+    }
 
     //
     // Destroy device

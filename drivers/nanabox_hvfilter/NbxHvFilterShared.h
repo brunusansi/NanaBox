@@ -48,6 +48,14 @@
 //
 #define NBX_MAX_PROFILE_NAME_LENGTH     64
 #define NBX_MAX_STRING_LENGTH           256
+#define NBX_MAX_VENDOR_STRING_LENGTH    13  // "GenuineIntel" + null terminator
+#define NBX_CPU_VENDOR_STRING_LENGTH    12  // Length without null terminator
+
+//
+// Known CPU vendor strings
+//
+#define NBX_VENDOR_INTEL                "GenuineIntel"
+#define NBX_VENDOR_AMD                  "AuthenticAMD"
 
 //
 // Profile flags
@@ -66,25 +74,66 @@
 #define NBX_STATUS_BUFFER_TOO_SMALL     0x00000003
 #define NBX_STATUS_NOT_SUPPORTED        0x00000004
 
+//
+// MSR interception modes
+//
+#define NBX_MSR_MODE_PASSTHROUGH        0
+#define NBX_MSR_MODE_ZERO               1
+#define NBX_MSR_MODE_BLOCK              2
+
 #ifndef _KERNEL_MODE
 #pragma pack(push, 1)
 #endif
 
 //
-// SET_PROFILE input structure
+// CPUID policy structure (Phase 3B)
+//
+typedef struct _NBX_CPUID_POLICY {
+#ifdef _KERNEL_MODE
+    BOOLEAN Enabled;
+    BOOLEAN HideHypervisor;
+    BOOLEAN MaskVirtualizationFeatures;
+    CHAR VendorString[NBX_MAX_VENDOR_STRING_LENGTH];
+#else
+    BOOL Enabled;
+    BOOL HideHypervisor;
+    BOOL MaskVirtualizationFeatures;
+    CHAR VendorString[NBX_MAX_VENDOR_STRING_LENGTH];
+#endif
+} NBX_CPUID_POLICY, *PNBX_CPUID_POLICY;
+
+//
+// MSR policy structure (Phase 3B)
+//
+typedef struct _NBX_MSR_POLICY {
+#ifdef _KERNEL_MODE
+    BOOLEAN Enabled;
+    ULONG HyperVMsrMode;  // NBX_MSR_MODE_*
+#else
+    BOOL Enabled;
+    DWORD HyperVMsrMode;  // NBX_MSR_MODE_*
+#endif
+} NBX_MSR_POLICY, *PNBX_MSR_POLICY;
+
+//
+// SET_PROFILE input structure (extended for Phase 3B)
 //
 typedef struct _NBX_SET_PROFILE_INPUT {
 #ifdef _KERNEL_MODE
     CHAR ProfileName[NBX_MAX_PROFILE_NAME_LENGTH];
     ULONG Flags;
+    NBX_CPUID_POLICY CpuIdPolicy;
+    NBX_MSR_POLICY MsrPolicy;
 #else
     CHAR ProfileName[NBX_MAX_PROFILE_NAME_LENGTH];
     DWORD Flags;
+    NBX_CPUID_POLICY CpuIdPolicy;
+    NBX_MSR_POLICY MsrPolicy;
 #endif
 } NBX_SET_PROFILE_INPUT, *PNBX_SET_PROFILE_INPUT;
 
 //
-// GET_STATUS output structure
+// GET_STATUS output structure (extended for Phase 3B)
 //
 typedef struct _NBX_GET_STATUS_OUTPUT {
 #ifdef _KERNEL_MODE
@@ -92,11 +141,15 @@ typedef struct _NBX_GET_STATUS_OUTPUT {
     ULONG ActiveFlags;
     ULONG DriverVersion;
     BOOLEAN IsActive;
+    NBX_CPUID_POLICY CpuIdPolicy;
+    NBX_MSR_POLICY MsrPolicy;
 #else
     CHAR ActiveProfileName[NBX_MAX_PROFILE_NAME_LENGTH];
     DWORD ActiveFlags;
     DWORD DriverVersion;
     BOOL IsActive;
+    NBX_CPUID_POLICY CpuIdPolicy;
+    NBX_MSR_POLICY MsrPolicy;
 #endif
 } NBX_GET_STATUS_OUTPUT, *PNBX_GET_STATUS_OUTPUT;
 

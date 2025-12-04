@@ -2,19 +2,25 @@
 
 ## Overview
 
-The **nanabox_hvfilter** driver is a Windows kernel-mode driver skeleton that provides the foundational infrastructure for anti-detection capabilities in NanaBox Anti-Detection Edition. This is Phase 3 of the project roadmap.
+The **nanabox_hvfilter** driver is a Windows kernel-mode driver that provides the foundational infrastructure for anti-detection capabilities in NanaBox Anti-Detection Edition. This is Phase 3 of the project roadmap.
 
-**Current Status**: Skeleton implementation only - IOCTLs and device creation are functional, but CPUID/MSR/timing/PCI interception is NOT yet implemented.
+**Current Status (Phase 3B)**: 
+- ✅ IOCTLs and device creation functional
+- ✅ CPUID policy configuration and validation
+- ✅ MSR policy configuration and validation
+- ✅ Profile activation/deactivation framework
+- ⚠️ Actual CPUID/MSR interception NOT yet implemented (requires hypervisor-level access)
 
 ## Purpose
 
-This driver serves as the kernel-mode component that will eventually:
-- Intercept CPUID instructions to hide virtualization signatures
-- Filter MSR (Model-Specific Register) access to block Hyper-V detection
-- Provide timing normalization for anti-cheat compatibility
-- Control PCI device topology visibility
+This driver serves as the kernel-mode component that:
+- **Currently (Phase 3B)**: Receives, validates, and stores CPUID/MSR policies from VM configuration
+- **Future (Phase 3C+)**: Will intercept CPUID instructions to hide virtualization signatures
+- **Future (Phase 3C+)**: Will filter MSR (Model-Specific Register) access to block Hyper-V detection
+- **Future (Phase 4)**: Will provide timing normalization for anti-cheat compatibility
+- **Future (Phase 4)**: Will control PCI device topology visibility
 
-**Important**: In this phase, the driver only handles configuration via IOCTLs and logs requests. It does NOT modify any CPU behavior or intercept anything.
+**Important**: Phase 3B focuses on configuration management and provides a safe framework for future interception. Actual CPU-level interception requires hypervisor cooperation and will be implemented in Phase 3C.
 
 ## Architecture
 
@@ -27,6 +33,7 @@ drivers/nanabox_hvfilter/
 ├── device.c              # Device creation and destruction
 ├── dispatch.c            # IRP dispatch handlers (CREATE, CLOSE, DEVICE_CONTROL)
 ├── ioctl.c               # IOCTL handler implementation
+├── cpuid_msr.c           # CPUID and MSR interception (Phase 3B+)
 ├── NbxHvFilterShared.h   # Shared definitions (user-mode and kernel-mode)
 ├── nanabox_hvfilter.inf  # Driver installation script
 └── nanabox_hvfilter.vcxproj  # Visual Studio project file
@@ -50,13 +57,27 @@ The driver exposes three IOCTLs for configuration management:
 
 #### 1. `IOCTL_NBX_HVFILTER_SET_PROFILE` (0x80000000)
 
-Sets the active anti-detection profile.
+Sets the active anti-detection profile with CPUID and MSR policies.
 
-**Input**: `NBX_SET_PROFILE_INPUT`
+**Input**: `NBX_SET_PROFILE_INPUT` (Extended in Phase 3B)
 ```c
+typedef struct _NBX_CPUID_POLICY {
+    BOOL Enabled;                        // Enable CPUID interception
+    BOOL HideHypervisor;                 // Hide hypervisor bit (CPUID.1.ECX[31])
+    BOOL MaskVirtualizationFeatures;     // Mask VMX/SVM features
+    CHAR VendorString[13];               // CPU vendor override ("GenuineIntel" or "AuthenticAMD")
+} NBX_CPUID_POLICY;
+
+typedef struct _NBX_MSR_POLICY {
+    BOOL Enabled;                        // Enable MSR interception
+    DWORD HyperVMsrMode;                 // Hyper-V MSR handling mode
+} NBX_MSR_POLICY;
+
 typedef struct _NBX_SET_PROFILE_INPUT {
-    CHAR ProfileName[64];    // Profile name (e.g., "Valorant", "BareMetal")
-    DWORD Flags;             // Profile flags (bitmask)
+    CHAR ProfileName[64];                // Profile name (e.g., "roblox", "valorant")
+    DWORD Flags;                         // Profile flags (bitmask)
+    NBX_CPUID_POLICY CpuIdPolicy;        // CPUID policy (Phase 3B)
+    NBX_MSR_POLICY MsrPolicy;            // MSR policy (Phase 3B)
 } NBX_SET_PROFILE_INPUT;
 ```
 
@@ -66,23 +87,32 @@ typedef struct _NBX_SET_PROFILE_INPUT {
 - `NBX_PROFILE_FLAG_TIMING` (0x00000004) - Enable timing normalization
 - `NBX_PROFILE_FLAG_PCI` (0x00000008) - Enable PCI topology control
 
+**MSR Modes**:
+- `NBX_MSR_MODE_PASSTHROUGH` (0) - Pass through to host
+- `NBX_MSR_MODE_ZERO` (1) - Return zero for reads
+- `NBX_MSR_MODE_BLOCK` (2) - Block access (return error)
+
 **Output**: None
 
 **Returns**: `STATUS_SUCCESS` or error code
 
+**Phase 3B Behavior**: Validates and stores the policy configuration. Logs what interception would be applied. Actual CPU/MSR interception requires Phase 3C+ implementation.
+
 #### 2. `IOCTL_NBX_HVFILTER_GET_STATUS` (0x80000001)
 
-Retrieves the current driver status and active profile.
+Retrieves the current driver status, active profile, and policy configuration.
 
 **Input**: None
 
-**Output**: `NBX_GET_STATUS_OUTPUT`
+**Output**: `NBX_GET_STATUS_OUTPUT` (Extended in Phase 3B)
 ```c
 typedef struct _NBX_GET_STATUS_OUTPUT {
-    CHAR ActiveProfileName[64];  // Currently active profile name
-    DWORD ActiveFlags;           // Currently active flags
-    DWORD DriverVersion;         // Driver version (encoded)
-    BOOL IsActive;               // TRUE if a profile is active
+    CHAR ActiveProfileName[64];          // Currently active profile name
+    DWORD ActiveFlags;                   // Currently active flags
+    DWORD DriverVersion;                 // Driver version (encoded)
+    BOOL IsActive;                       // TRUE if a profile is active
+    NBX_CPUID_POLICY CpuIdPolicy;        // Active CPUID policy (Phase 3B)
+    NBX_MSR_POLICY MsrPolicy;            // Active MSR policy (Phase 3B)
 } NBX_GET_STATUS_OUTPUT;
 ```
 
@@ -318,35 +348,126 @@ bcdedit /dbgsettings serial debugport:1 baudrate:115200
 - **NbxHandleSetProfile**: Profile set with details
 - **NbxHandleGetStatus**: Status retrieved
 - **NbxHandleClearProfile**: Profile cleared
+- **NbxActivateCpuIdInterception**: CPUID policy configured (Phase 3B)
+- **NbxActivateMsrInterception**: MSR policy configured (Phase 3B)
+- **NbxDeactivateCpuIdInterception**: CPUID policy cleared
+- **NbxDeactivateMsrInterception**: MSR policy cleared
+
+## Phase 3B: CPUID and MSR Configuration
+
+### Current Implementation (Phase 3B)
+
+Phase 3B provides the configuration framework for CPUID and MSR interception:
+
+**What Phase 3B Does**:
+- ✅ Receives CPUID and MSR policies from VM configuration
+- ✅ Validates policy configuration (vendor strings, MSR modes, etc.)
+- ✅ Stores policies in driver context
+- ✅ Logs detailed configuration information
+- ✅ Provides activation/deactivation framework
+- ✅ Safe cleanup on profile changes or driver unload
+
+**What Phase 3B Does NOT Do**:
+- ⚠️ Does NOT actually intercept CPUID instructions
+- ⚠️ Does NOT actually filter MSR access
+- ⚠️ Does NOT modify CPU behavior
+
+### Why Actual Interception is Deferred to Phase 3C
+
+Running as a guest driver inside a Hyper-V VM presents significant technical challenges:
+
+1. **CPUID Interception**: Guest OS drivers cannot directly intercept CPUID instructions without hypervisor cooperation. This requires either:
+   - Hyper-V enlightenment integration
+   - Host-side implementation using Windows Hypervisor Platform (WHP) API
+   - Custom hypervisor module
+
+2. **MSR Filtering**: Guest-level MSR access is already controlled by the hypervisor. Effective MSR filtering requires:
+   - Hyper-V MSR intercept registration
+   - Host-side WHP MSR filtering
+   - Special Hyper-V enlightenments
+
+3. **Safety First**: Phase 3B establishes the safe configuration framework before attempting complex CPU-level operations.
+
+### Testing Profile Configuration (Phase 3B)
+
+You can test that profile configuration is working correctly:
+
+1. **Load a profile** with the user-mode helper:
+   ```cmd
+   NbxHvFilterClient.exe set roblox 0x00000003
+   ```
+
+2. **Check driver logs** (using DebugView):
+   - Look for `[PHASE 3B] CPUID configuration stored`
+   - Look for `[PHASE 3B] MSR configuration stored`
+   - Verify Hide Hypervisor, Vendor String, MSR Mode settings
+
+3. **Query status**:
+   ```cmd
+   NbxHvFilterClient.exe status
+   ```
+   Should show CPUID and MSR policies
+
+4. **Clear profile**:
+   ```cmd
+   NbxHvFilterClient.exe clear
+   ```
+   Should see deactivation messages in logs
+
+### Profile Examples for Testing
+
+#### Roblox (Byfron) Profile
+```c
+CpuIdPolicy.Enabled = TRUE
+CpuIdPolicy.HideHypervisor = TRUE
+CpuIdPolicy.MaskVirtualizationFeatures = TRUE
+CpuIdPolicy.VendorString = "AuthenticAMD"
+
+MsrPolicy.Enabled = TRUE
+MsrPolicy.HyperVMsrMode = NBX_MSR_MODE_ZERO
+```
+
+#### Valorant (Riot Vanguard) Profile
+```c
+CpuIdPolicy.Enabled = TRUE
+CpuIdPolicy.HideHypervisor = TRUE
+CpuIdPolicy.MaskVirtualizationFeatures = TRUE
+CpuIdPolicy.VendorString = "GenuineIntel"
+
+MsrPolicy.Enabled = TRUE
+MsrPolicy.HyperVMsrMode = NBX_MSR_MODE_ZERO
+```
 
 ## Safety and Security
 
-### What This Driver Does NOT Do (Yet)
-
-This skeleton driver is intentionally limited in scope:
-
-- ❌ Does NOT hook CPUID instructions
-- ❌ Does NOT intercept MSR access
-- ❌ Does NOT modify timing behavior
-- ❌ Does NOT alter PCI topology
-- ❌ Does NOT patch any system structures (IDT, SSDT, etc.)
-- ❌ Does NOT modify CPU registers (CR0, CR4, etc.)
-
-### What It Does Do
+### What This Driver Does (Phase 3B)
 
 - ✅ Creates a device object and symbolic link
 - ✅ Handles IOCTLs for profile management
-- ✅ Logs all operations
-- ✅ Validates input buffers
+- ✅ Validates and stores CPUID/MSR policies
+- ✅ Logs all operations with detailed policy information
+- ✅ Validates input buffers and policy parameters
 - ✅ Cleans up resources on unload
+- ✅ Safe activation/deactivation of configuration
+
+### What This Driver Does NOT Do (Phase 3B)
+
+- ❌ Does NOT hook CPUID instructions (Phase 3C+)
+- ❌ Does NOT intercept MSR access (Phase 3C+)
+- ❌ Does NOT modify timing behavior (Phase 4)
+- ❌ Does NOT alter PCI topology (Phase 4)
+- ❌ Does NOT patch any system structures (IDT, SSDT, etc.)
+- ❌ Does NOT modify CPU registers (CR0, CR4, etc.)
 
 ### Safety Measures
 
-1. **Input Validation**: All IOCTL inputs are validated for size and NULL checks
-2. **Safe String Handling**: Profile names are null-terminated and truncated if needed
-3. **Error Handling**: All error paths are handled cleanly
-4. **No Memory Leaks**: Device objects and symbolic links are properly cleaned up
-5. **Buffered I/O**: Uses `METHOD_BUFFERED` for safe data transfer
+1. **Input Validation**: All IOCTL inputs validated for size, NULL checks, and valid values
+2. **Policy Validation**: Vendor strings, MSR modes, and flags validated before storing
+3. **Safe String Handling**: Profile names and vendor strings null-terminated and truncated
+4. **Error Handling**: All error paths handled cleanly with appropriate logging
+5. **No Memory Leaks**: Device objects, symbolic links, and contexts properly cleaned up
+6. **Buffered I/O**: Uses `METHOD_BUFFERED` for safe data transfer
+7. **Conservative Approach**: No CPU modification in Phase 3B, only configuration management
 
 ## Troubleshooting
 
@@ -379,10 +500,11 @@ This skeleton driver is intentionally limited in scope:
 
 ## Next Steps (Future Phases)
 
-This driver skeleton will be extended in future phases to implement:
+The configuration framework established in Phase 3B will be extended in future phases:
 
-1. **CPUID Interception** (Phase 3)
-   - Hook CPUID instruction execution
+1. **CPUID Interception** (Phase 3C)
+   - Implement actual CPUID instruction interception
+   - Consider host-side implementation using WHP API
    - Spoof CPU vendor strings
    - Hide hypervisor bit (CPUID.1.ECX[31])
    - Mask virtualization features

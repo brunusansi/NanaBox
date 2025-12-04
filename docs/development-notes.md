@@ -96,15 +96,25 @@ NanaBox/
 - ✅ Logging and diagnostics
 - ✅ Safe error handling
 
-**Pending Implementation (Phase 3B)**:
-- ⏳ CPUID instruction interception
-- ⏳ MSR read/write filtering
+**Implemented (Phase 3B)**:
+- ✅ CPUID policy structures and configuration
+- ✅ MSR policy structures and configuration
+- ✅ Policy validation and storage
+- ✅ Configuration logging and diagnostics
+- ✅ Safe activation/deactivation framework
+- ⚠️ CPUID interception (configuration only - actual interception pending Phase 3C)
+- ⚠️ MSR filtering (configuration only - actual filtering pending Phase 3C)
+
+**Pending Implementation (Phase 3C+)**:
+- ⏳ Actual CPUID instruction interception (requires hypervisor-level access)
+- ⏳ Actual MSR read/write filtering (requires Hyper-V enlightenments)
 - ⏳ Timing normalization hooks
 - ⏳ PCI topology control
 
 **Responsibilities**:
-- Intercept CPUID instructions in guest OS (NOT YET IMPLEMENTED)
-- Filter MSR reads/writes (NOT YET IMPLEMENTED)
+- Store and validate CPUID/MSR policies ✅
+- Intercept CPUID instructions in guest OS (FRAMEWORK READY - Phase 3C)
+- Filter MSR reads/writes (FRAMEWORK READY - Phase 3C)
 - Override ACPI tables visible to guest OS (FUTURE)
 - Provide user-mode control interface (IOCTLs) ✅
 
@@ -231,15 +241,17 @@ function Set-AntiDetectionConfig { }
 - Test on multiple Windows versions
 
 ### Phase 3: CPUID & MSR Drivers 🚧
-**Status**: Phase 3A (Skeleton) Complete ✅ | Phase 3B (Interception) Pending ⏳
+**Status**: Phase 3A (Skeleton) Complete ✅ | Phase 3B (Configuration) Complete ✅ | Phase 3C (Full Interception) Pending ⏳
 
 **Deliverables**:
 - ✅ nanabox_hvfilter.sys - Unified driver skeleton
 - ✅ NbxHvFilterClient.exe - User-mode helper utility
 - ✅ IOCTL interface for profile management
 - ✅ Installation and signing documentation
-- ⏳ CPUID interception implementation (Phase 3B)
-- ⏳ MSR filtering implementation (Phase 3B)
+- ✅ CPUID policy structures and configuration (Phase 3B)
+- ✅ MSR policy structures and configuration (Phase 3B)
+- ⏳ Full CPUID interception implementation (Phase 3C)
+- ⏳ Full MSR filtering implementation (Phase 3C)
 
 **Phase 3A (Complete)**:
 1. ✅ Design driver architecture
@@ -248,10 +260,18 @@ function Set-AntiDetectionConfig { }
 4. ✅ Create user-mode helper
 5. ✅ Document build and installation process
 
-**Phase 3B (Pending)**:
-1. ⏳ Implement CPUID instruction hooking
-2. ⏳ Implement MSR read/write interception
-3. ⏳ Add profile-based configuration loading
+**Phase 3B (Complete)**:
+1. ✅ Extend IOCTL structures with CPUID/MSR policies
+2. ✅ Implement policy validation and storage
+3. ✅ Add configuration activation/deactivation framework
+4. ✅ Profile-based configuration loading support
+5. ✅ Comprehensive logging and diagnostics
+6. ⚠️ Document limitations of guest-level interception
+
+**Phase 3C (Pending)**:
+1. ⏳ Implement actual CPUID instruction hooking (requires hypervisor cooperation)
+2. ⏳ Implement actual MSR read/write interception (requires Hyper-V enlightenments)
+3. ⏳ Consider host-side implementation using WHP API
 4. ⏳ Test with anti-cheat detection tools
 5. ⏳ Performance optimization
 
@@ -259,10 +279,12 @@ function Set-AntiDetectionConfig { }
 - ✅ Verify driver loads and unloads cleanly
 - ✅ Test IOCTL communication with user-mode
 - ✅ Validate input buffer handling
-- ⏳ Test CPUID spoofing with CPU-Z (Phase 3B)
-- ⏳ Test MSR blocking with RWEverything (Phase 3B)
-- ⏳ Test with Pafish, Al-Khaser (Phase 3B)
-- ⏳ Verify stability under load (Phase 3B)
+- ✅ Test policy storage and retrieval (Phase 3B)
+- ✅ Verify activation/deactivation logging (Phase 3B)
+- ⏳ Test actual CPUID spoofing with CPU-Z (Phase 3C)
+- ⏳ Test actual MSR blocking with RWEverything (Phase 3C)
+- ⏳ Test with Pafish, Al-Khaser (Phase 3C)
+- ⏳ Verify stability under load (Phase 3C)
 
 **Security Considerations**:
 - ⚠️ Kernel drivers require extreme care
