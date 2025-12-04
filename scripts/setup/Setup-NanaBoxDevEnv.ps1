@@ -64,7 +64,7 @@
     https://learn.microsoft.com/en-us/windows-hardware/drivers/
 #>
 
-[CmdletBinding(SupportsShouldProcess=$true)]
+[CmdletBinding()]
 param(
     [Parameter(Mandatory=$false)]
     [switch]$SkipEnvironmentCheck,
@@ -97,7 +97,6 @@ $VerbosePreference = if ($PSBoundParameters['Verbose']) { "Continue" } else { "S
 # Script configuration
 $ScriptVersion = "1.0.0"
 $CertificateName = "NanaBox Test Certificate"
-$CertificateStoreName = "PrivateCertStore"
 $DriverName = "nanabox_hvfilter"
 
 # URLs for downloading required tools
@@ -449,8 +448,6 @@ function New-TestCertificate {
             
             # Install to Trusted Root and Trusted Publishers
             Write-Step "Installing certificate to trusted stores..."
-            
-            $certBytes = $cert.Export([System.Security.Cryptography.X509Certificates.X509ContentType]::Cert)
             
             # Install to Root
             $rootStore = New-Object System.Security.Cryptography.X509Certificates.X509Store("Root", "LocalMachine")
