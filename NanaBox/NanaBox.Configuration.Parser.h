@@ -119,6 +119,36 @@ namespace NanaBox
     AcpiOverrideConfiguration ToAcpiOverrideConfiguration(
         nlohmann::json const& Value);
 
+    nlohmann::json FromTimingStrategy(
+        TimingStrategy const& Value);
+
+    TimingStrategy ToTimingStrategy(
+        nlohmann::json const& Value);
+
+    nlohmann::json FromTimingConfiguration(
+        TimingConfiguration const& Value);
+
+    TimingConfiguration ToTimingConfiguration(
+        nlohmann::json const& Value);
+
+    nlohmann::json FromPciDeviceConfiguration(
+        PciDeviceConfiguration const& Value);
+
+    PciDeviceConfiguration ToPciDeviceConfiguration(
+        nlohmann::json const& Value);
+
+    nlohmann::json FromPciConfiguration(
+        PciConfiguration const& Value);
+
+    PciConfiguration ToPciConfiguration(
+        nlohmann::json const& Value);
+
+    nlohmann::json FromVirtualMachineMetadata(
+        VirtualMachineMetadata const& Value);
+
+    VirtualMachineMetadata ToVirtualMachineMetadata(
+        nlohmann::json const& Value);
+
     nlohmann::json FromVirtualMachineConfiguration(
         VirtualMachineConfiguration const& Value);
 
