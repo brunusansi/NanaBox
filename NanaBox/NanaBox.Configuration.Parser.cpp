@@ -1233,10 +1233,8 @@ nlohmann::json NanaBox::FromVirtualMachineMetadata(
         Result["LastUpdatedTimestamp"] = Value.LastUpdatedTimestamp;
     }
 
-    if (Value.SchemaVersion > 1)
-    {
-        Result["SchemaVersion"] = Value.SchemaVersion;
-    }
+    // Always serialize SchemaVersion for clarity
+    Result["SchemaVersion"] = Value.SchemaVersion;
 
     return Result;
 }

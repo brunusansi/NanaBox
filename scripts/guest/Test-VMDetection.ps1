@@ -188,9 +188,16 @@ process {
     
     Test-DetectionVector "System" "Suspicious Screen Resolution" {
         # Typical VMs often use specific resolutions
-        $screen = [System.Windows.Forms.SystemInformation]::PrimaryMonitorSize
-        ($screen.Width -eq 1024 -and $screen.Height -eq 768) -or
-        ($screen.Width -eq 800 -and $screen.Height -eq 600)
+        try {
+            Add-Type -AssemblyName System.Windows.Forms -ErrorAction Stop
+            $screen = [System.Windows.Forms.SystemInformation]::PrimaryMonitorSize
+            ($screen.Width -eq 1024 -and $screen.Height -eq 768) -or
+            ($screen.Width -eq 800 -and $screen.Height -eq 600)
+        }
+        catch {
+            # Cannot test without Windows Forms, skip this check
+            $false
+        }
     }
 }
 

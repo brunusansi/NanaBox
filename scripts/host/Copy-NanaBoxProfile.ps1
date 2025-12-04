@@ -115,11 +115,12 @@ process {
         $newUUID = [guid]::NewGuid().ToString()
         
         # Generate new MAC address (preserve vendor if possible)
-        $oldMAC = $config.NanaBox.NetworkAdapters[0].MacAddress
-        $vendorPrefix = if ($oldMAC -and $oldMAC.Length -ge 8) {
-            $oldMAC.Substring(0, 8)
-        } else {
-            "D8-9E-F3"  # Default to ASUS
+        $vendorPrefix = "D8-9E-F3"  # Default to ASUS
+        if ($config.NanaBox.NetworkAdapters -and $config.NanaBox.NetworkAdapters.Count -gt 0) {
+            $oldMAC = $config.NanaBox.NetworkAdapters[0].MacAddress
+            if ($oldMAC -and $oldMAC.Length -ge 8) {
+                $vendorPrefix = $oldMAC.Substring(0, 8)
+            }
         }
         
         # Use New-RandomMAC.ps1 if available
@@ -161,7 +162,11 @@ process {
         $config.NanaBox.ChipsetInformation.ChassisSerialNumber = $newSerial
         
         # Update network
-        $config.NanaBox.NetworkAdapters[0].MacAddress = $newMAC
+        if ($config.NanaBox.NetworkAdapters -and $config.NanaBox.NetworkAdapters.Count -gt 0) {
+            $config.NanaBox.NetworkAdapters[0].MacAddress = $newMAC
+        } else {
+            Write-Warning "No network adapters found in source configuration"
+        }
         
         # Update storage paths
         if (-not $PreserveStorage) {
