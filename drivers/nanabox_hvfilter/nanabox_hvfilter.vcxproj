@@ -85,6 +85,7 @@
     <ClCompile Include="device.c" />
     <ClCompile Include="dispatch.c" />
     <ClCompile Include="ioctl.c" />
+    <ClCompile Include="cpuid_msr.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="driver.h" />

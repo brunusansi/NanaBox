@@ -44,26 +44,80 @@ NbxHandleSetProfile(
     // Validate profile name is null-terminated
     //
     profileInput->ProfileName[NBX_MAX_PROFILE_NAME_LENGTH - 1] = '\0';
+    profileInput->CpuIdPolicy.VendorString[NBX_MAX_VENDOR_STRING_LENGTH - 1] = '\0';
 
     NBX_INFO("NbxHandleSetProfile: ProfileName='%s', Flags=0x%08X\n",
              profileInput->ProfileName, profileInput->Flags);
 
     //
+    // Deactivate any existing interception first
+    //
+    if (g_DriverContext.CpuIdActive) {
+        NBX_INFO("NbxHandleSetProfile: Deactivating existing CPUID interception\n");
+        NbxDeactivateCpuIdInterception();
+        g_DriverContext.CpuIdActive = FALSE;
+    }
+    if (g_DriverContext.MsrActive) {
+        NBX_INFO("NbxHandleSetProfile: Deactivating existing MSR interception\n");
+        NbxDeactivateMsrInterception();
+        g_DriverContext.MsrActive = FALSE;
+    }
+
+    //
     // Store profile information in global context
-    // Zero the buffer first, then copy the null-terminated profile name
-    // This ensures any remaining space is zeroed
     //
     RtlZeroMemory(g_DriverContext.ActiveProfileName, sizeof(g_DriverContext.ActiveProfileName));
     RtlCopyMemory(
         g_DriverContext.ActiveProfileName,
         profileInput->ProfileName,
-        NBX_MAX_PROFILE_NAME_LENGTH - 1  // Leave room for null terminator
+        NBX_MAX_PROFILE_NAME_LENGTH - 1
     );
-    // Ensure null termination (redundant but explicit)
     g_DriverContext.ActiveProfileName[NBX_MAX_PROFILE_NAME_LENGTH - 1] = '\0';
     
     g_DriverContext.ActiveFlags = profileInput->Flags;
     g_DriverContext.IsActive = TRUE;
+
+    //
+    // Store CPUID and MSR policies
+    //
+    RtlCopyMemory(&g_DriverContext.CpuIdPolicy, &profileInput->CpuIdPolicy, sizeof(NBX_CPUID_POLICY));
+    RtlCopyMemory(&g_DriverContext.MsrPolicy, &profileInput->MsrPolicy, sizeof(NBX_MSR_POLICY));
+
+    //
+    // Activate CPUID interception if enabled
+    //
+    if (profileInput->CpuIdPolicy.Enabled) {
+        NTSTATUS status;
+        NBX_INFO("NbxHandleSetProfile: Activating CPUID interception\n");
+        NBX_INFO("  - HideHypervisor: %s\n", profileInput->CpuIdPolicy.HideHypervisor ? "Yes" : "No");
+        NBX_INFO("  - MaskVirtualization: %s\n", profileInput->CpuIdPolicy.MaskVirtualizationFeatures ? "Yes" : "No");
+        NBX_INFO("  - VendorString: '%s'\n", profileInput->CpuIdPolicy.VendorString);
+
+        status = NbxActivateCpuIdInterception(&profileInput->CpuIdPolicy);
+        if (!NT_SUCCESS(status)) {
+            NBX_WARNING("NbxHandleSetProfile: Failed to activate CPUID interception, status=0x%08X (continuing)\n", status);
+        } else {
+            g_DriverContext.CpuIdActive = TRUE;
+            NBX_INFO("NbxHandleSetProfile: CPUID interception activated successfully\n");
+        }
+    }
+
+    //
+    // Activate MSR interception if enabled
+    //
+    if (profileInput->MsrPolicy.Enabled) {
+        NTSTATUS status;
+        NBX_INFO("NbxHandleSetProfile: Activating MSR interception\n");
+        NBX_INFO("  - HyperVMsrMode: %u\n", profileInput->MsrPolicy.HyperVMsrMode);
+
+        status = NbxActivateMsrInterception(&profileInput->MsrPolicy);
+        if (!NT_SUCCESS(status)) {
+            NBX_WARNING("NbxHandleSetProfile: Failed to activate MSR interception, status=0x%08X (continuing)\n", status);
+        } else {
+            g_DriverContext.MsrActive = TRUE;
+            NBX_INFO("NbxHandleSetProfile: MSR interception activated successfully\n");
+        }
+    }
 
     NBX_INFO("NbxHandleSetProfile: Profile loaded successfully\n");
 
@@ -123,6 +177,12 @@ NbxHandleGetStatus(
                                   NANABOX_HVFILTER_VERSION_BUILD;
     statusOutput->IsActive = g_DriverContext.IsActive;
 
+    //
+    // Include CPUID and MSR policy information
+    //
+    RtlCopyMemory(&statusOutput->CpuIdPolicy, &g_DriverContext.CpuIdPolicy, sizeof(NBX_CPUID_POLICY));
+    RtlCopyMemory(&statusOutput->MsrPolicy, &g_DriverContext.MsrPolicy, sizeof(NBX_MSR_POLICY));
+
     *BytesReturned = sizeof(NBX_GET_STATUS_OUTPUT);
 
     NBX_INFO("NbxHandleGetStatus: ProfileName='%s', Flags=0x%08X, Version=0x%08X, Active=%d\n",
@@ -130,6 +190,9 @@ NbxHandleGetStatus(
              statusOutput->ActiveFlags,
              statusOutput->DriverVersion,
              statusOutput->IsActive);
+    NBX_INFO("  - CPUID Active: %s, MSR Active: %s\n",
+             g_DriverContext.CpuIdActive ? "Yes" : "No",
+             g_DriverContext.MsrActive ? "Yes" : "No");
 
     return STATUS_SUCCESS;
 }
@@ -148,12 +211,36 @@ NbxHandleClearProfile(
     NBX_INFO("NbxHandleClearProfile: Clearing active profile\n");
 
     //
+    // Deactivate CPUID interception if active
+    //
+    if (g_DriverContext.CpuIdActive) {
+        NBX_INFO("NbxHandleClearProfile: Deactivating CPUID interception\n");
+        NbxDeactivateCpuIdInterception();
+        g_DriverContext.CpuIdActive = FALSE;
+    }
+
+    //
+    // Deactivate MSR interception if active
+    //
+    if (g_DriverContext.MsrActive) {
+        NBX_INFO("NbxHandleClearProfile: Deactivating MSR interception\n");
+        NbxDeactivateMsrInterception();
+        g_DriverContext.MsrActive = FALSE;
+    }
+
+    //
     // Clear profile information
     //
     RtlZeroMemory(g_DriverContext.ActiveProfileName, sizeof(g_DriverContext.ActiveProfileName));
     RtlCopyMemory(g_DriverContext.ActiveProfileName, "None", sizeof("None"));
     g_DriverContext.ActiveFlags = 0;
     g_DriverContext.IsActive = FALSE;
+
+    //
+    // Clear policy structures
+    //
+    RtlZeroMemory(&g_DriverContext.CpuIdPolicy, sizeof(NBX_CPUID_POLICY));
+    RtlZeroMemory(&g_DriverContext.MsrPolicy, sizeof(NBX_MSR_POLICY));
 
     NBX_INFO("NbxHandleClearProfile: Profile cleared successfully\n");
 

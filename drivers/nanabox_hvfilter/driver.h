@@ -38,7 +38,7 @@
     NBX_PRINT(DPFLTR_WARNING_LEVEL, _format_, ##__VA_ARGS__)
 
 //
-// Driver context structure
+// Driver context structure (extended for Phase 3B)
 //
 typedef struct _NBX_DRIVER_CONTEXT {
     PDEVICE_OBJECT DeviceObject;
@@ -47,6 +47,10 @@ typedef struct _NBX_DRIVER_CONTEXT {
     BOOLEAN IsActive;
     CHAR ActiveProfileName[NBX_MAX_PROFILE_NAME_LENGTH];
     ULONG ActiveFlags;
+    NBX_CPUID_POLICY CpuIdPolicy;
+    NBX_MSR_POLICY MsrPolicy;
+    BOOLEAN CpuIdActive;
+    BOOLEAN MsrActive;
 } NBX_DRIVER_CONTEXT, *PNBX_DRIVER_CONTEXT;
 
 //
@@ -87,6 +91,31 @@ NbxHandleIoctl(
     _Out_writes_bytes_opt_(OutputBufferLength) PVOID OutputBuffer,
     _In_ ULONG OutputBufferLength,
     _Out_ PULONG_PTR BytesReturned
+);
+
+//
+// CPUID/MSR interception functions (Phase 3B)
+// Note: These are minimal implementations for initial testing
+//
+
+NTSTATUS
+NbxActivateCpuIdInterception(
+    _In_ PNBX_CPUID_POLICY Policy
+);
+
+VOID
+NbxDeactivateCpuIdInterception(
+    VOID
+);
+
+NTSTATUS
+NbxActivateMsrInterception(
+    _In_ PNBX_MSR_POLICY Policy
+);
+
+VOID
+NbxDeactivateMsrInterception(
+    VOID
 );
 
 #endif // !NBX_DRIVER_H
