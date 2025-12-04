@@ -1,0 +1,29 @@
+{
+  "name": "desktop-amd-2021",
+  "description": "AMD B550 chipset desktop (2021) - Popular gaming build",
+  "vendor": "ASUSTeK COMPUTER INC.",
+  "product": "ROG STRIX B550-F GAMING",
+  "version": "Rev X.0x",
+  "serialNumber": "System Serial Number",
+  "skuNumber": "SKU",
+  "family": "To be filled by O.E.M.",
+  "baseboard": {
+    "manufacturer": "ASUSTeK COMPUTER INC.",
+    "product": "ROG STRIX B550-F GAMING",
+    "version": "Rev X.0x",
+    "serialNumber": "Default string"
+  },
+  "chassis": {
+    "type": "Desktop",
+    "serialNumber": "Default string"
+  },
+  "uuid": "12345678-90ab-cdef-1234-567890abcdef",
+  "oemStrings": [
+    "Default string"
+  ],
+  "notes": [
+    "Replace placeholder strings with unique values per VM",
+    "This template represents a common AMD B550 desktop from 2021",
+    "Compatible with: AMD Ryzen 5 5600X, Ryzen 7 5800X, Ryzen 9 5900X"
+  ]
+}

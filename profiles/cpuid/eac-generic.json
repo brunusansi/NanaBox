@@ -1,0 +1,43 @@
+{
+  "name": "eac-generic",
+  "description": "Easy Anti-Cheat generic configuration",
+  "vendorId": "GenuineIntel",
+  "brandString": "Intel(R) Core(TM) i7-11700K CPU @ 3.60GHz",
+  "hideHypervisorBit": true,
+  "featureMasks": {
+    "ecx": "0xFFFFFFFF",
+    "edx": "0xFFFFFFFF"
+  },
+  "leafOverrides": [
+    {
+      "leaf": 1,
+      "subleaf": 0,
+      "eax": "auto",
+      "ebx": "auto",
+      "ecx": "mask:0x7FFFFFFF",
+      "edx": "auto",
+      "comment": "Hide hypervisor bit"
+    }
+  ],
+  "antiCheatNotes": {
+    "target": "Easy Anti-Cheat (EAC)",
+    "games": [
+      "Fortnite",
+      "Apex Legends",
+      "Rust",
+      "Dead by Daylight",
+      "New World"
+    ],
+    "criticality": "medium-high",
+    "requirements": [
+      "Hide hypervisor bit",
+      "Basic CPU feature normalization",
+      "EAC has multiple detection vectors beyond CPUID"
+    ]
+  },
+  "notes": [
+    "Generic configuration for Easy Anti-Cheat protected games",
+    "Based on Intel Core i7-11700K (11th gen, Rocket Lake)",
+    "EAC checks are less aggressive than Vanguard but still comprehensive"
+  ]
+}

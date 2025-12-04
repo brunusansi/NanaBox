@@ -1,0 +1,47 @@
+{
+  "name": "default-gaming-safe",
+  "description": "Conservative MSR configuration for gaming",
+  "rules": [
+    {
+      "msr": "0x40000000",
+      "mode": "zero",
+      "comment": "Hyper-V interface identification"
+    },
+    {
+      "msr": "0x40000001",
+      "mode": "zero",
+      "comment": "Hyper-V version"
+    },
+    {
+      "msr": "0x40000002",
+      "mode": "zero",
+      "comment": "Hyper-V features"
+    },
+    {
+      "msr": "0x40000003",
+      "mode": "zero",
+      "comment": "Hyper-V enlightenment information"
+    },
+    {
+      "msr": "0x40000080",
+      "mode": "zero",
+      "comment": "Hyper-V guest OS ID"
+    },
+    {
+      "msr": "0x40000081",
+      "mode": "zero",
+      "comment": "Hyper-V hypercall page"
+    },
+    {
+      "msr": "0x40000082",
+      "mode": "zero",
+      "comment": "Hyper-V VP index"
+    }
+  ],
+  "notes": [
+    "Blocks access to Hyper-V MSR range (0x40000000-0x400000FF)",
+    "Returns zero for Hyper-V-specific MSRs to hide virtualization",
+    "Safe for most gaming scenarios",
+    "Does not affect TSC or performance counters"
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "name": "desktop-intel-2022",
+  "description": "Intel Z690 chipset desktop (2022) - 12th gen Alder Lake",
+  "vendor": "ASUSTeK COMPUTER INC.",
+  "product": "ROG STRIX Z690-A GAMING WIFI D4",
+  "version": "Rev 1.xx",
+  "serialNumber": "MB-1234567890123",
+  "skuNumber": "SKU1234567890ABC",
+  "family": "Desktop",
+  "baseboard": {
+    "manufacturer": "ASUSTeK COMPUTER INC.",
+    "product": "ROG STRIX Z690-A GAMING WIFI D4",
+    "version": "Rev 1.xx",
+    "serialNumber": "200722001234"
+  },
+  "chassis": {
+    "type": "Desktop",
+    "serialNumber": "CHN-1234567890"
+  },
+  "uuid": "03000200-0400-0500-0006-000700080009",
+  "oemStrings": [
+    "Default string",
+    "ASUS ROG"
+  ],
+  "notes": [
+    "Replace serial numbers with unique values per VM",
+    "This template represents Intel Z690 desktop from 2022",
+    "Compatible with: Intel Core i5-12600K, i7-12700K, i9-12900K"
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "name": "intel-8c-2020",
+  "description": "Intel Core i7-10700K (Comet Lake, 8C/16T)",
+  "vendorId": "GenuineIntel",
+  "brandString": "Intel(R) Core(TM) i7-10700K CPU @ 3.80GHz",
+  "hideHypervisorBit": true,
+  "featureMasks": {
+    "ecx": "0xFFFFFFFF",
+    "edx": "0xFFFFFFFF"
+  },
+  "leafOverrides": [
+    {
+      "leaf": 1,
+      "subleaf": 0,
+      "eax": "auto",
+      "ebx": "auto",
+      "ecx": "mask:0x7FFFFFFF",
+      "edx": "auto",
+      "comment": "Hide hypervisor bit in ECX[31]"
+    },
+    {
+      "leaf": 7,
+      "subleaf": 0,
+      "eax": "auto",
+      "ebx": "auto",
+      "ecx": "auto",
+      "edx": "auto",
+      "comment": "Extended features"
+    }
+  ],
+  "notes": [
+    "This profile emulates Intel Core i7-10700K (10th gen, Comet Lake)",
+    "8 cores, 16 threads, 3.8 GHz base, 5.1 GHz turbo",
+    "Compatible with most gaming anti-cheats"
+  ]
+}

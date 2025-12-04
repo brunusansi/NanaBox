@@ -1,0 +1,47 @@
+{
+  "name": "valorant-safe",
+  "description": "Riot Vanguard compatible CPUID configuration",
+  "vendorId": "GenuineIntel",
+  "brandString": "Intel(R) Core(TM) i7-12700K CPU @ 3.60GHz",
+  "hideHypervisorBit": true,
+  "featureMasks": {
+    "ecx": "0xFFFFFFFF",
+    "edx": "0xFFFFFFFF"
+  },
+  "leafOverrides": [
+    {
+      "leaf": 1,
+      "subleaf": 0,
+      "eax": "auto",
+      "ebx": "auto",
+      "ecx": "mask:0x7FFFFFFF",
+      "edx": "auto",
+      "comment": "Hide hypervisor bit - critical for Vanguard"
+    },
+    {
+      "leaf": 7,
+      "subleaf": 0,
+      "eax": "auto",
+      "ebx": "auto",
+      "ecx": "auto",
+      "edx": "auto",
+      "comment": "Extended features"
+    }
+  ],
+  "antiCheatNotes": {
+    "target": "Riot Vanguard",
+    "game": "Valorant",
+    "criticality": "high",
+    "requirements": [
+      "Must hide hypervisor bit (CPUID.1.ECX[31])",
+      "Must hide VMX/SVM features",
+      "Must present consistent CPU topology",
+      "Vanguard checks CPUID at kernel level"
+    ]
+  },
+  "notes": [
+    "Optimized for Riot Vanguard anti-cheat",
+    "Based on Intel Core i7-12700K (12th gen, Alder Lake)",
+    "Critical: Hide all virtualization features"
+  ]
+}

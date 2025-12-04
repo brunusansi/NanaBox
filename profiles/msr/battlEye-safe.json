@@ -1,0 +1,56 @@
+{
+  "name": "battlEye-safe",
+  "description": "BattlEye compatible MSR configuration",
+  "rules": [
+    {
+      "msr": "0x40000000",
+      "mode": "zero",
+      "comment": "Hyper-V interface - BattlEye checks this"
+    },
+    {
+      "msr": "0x40000001",
+      "mode": "zero",
+      "comment": "Hyper-V version"
+    },
+    {
+      "msr": "0x40000002",
+      "mode": "zero",
+      "comment": "Hyper-V features"
+    },
+    {
+      "msr": "0x40000003",
+      "mode": "zero",
+      "comment": "Hyper-V enlightenment"
+    },
+    {
+      "msr": "0x40000080",
+      "mode": "zero",
+      "comment": "Hyper-V guest OS ID"
+    },
+    {
+      "msr": "0x40000081",
+      "mode": "zero",
+      "comment": "Hyper-V hypercall"
+    },
+    {
+      "msr": "0x10",
+      "mode": "mirror",
+      "comment": "TSC"
+    }
+  },
+  "antiCheatNotes": {
+    "target": "BattlEye",
+    "games": ["PUBG", "Rainbow Six Siege", "Escape from Tarkov", "DayZ"],
+    "criticality": "high",
+    "requirements": [
+      "Hide Hyper-V MSRs completely",
+      "BattlEye performs comprehensive MSR checks",
+      "Similar to EAC but with different heuristics"
+    ]
+  },
+  "notes": [
+    "BattlEye-specific MSR configuration",
+    "Comprehensive Hyper-V MSR blocking",
+    "Used by many popular competitive games"
+  ]
+}
