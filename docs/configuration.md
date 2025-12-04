@@ -83,7 +83,7 @@ Configuration metadata for tracking and multi-account isolation.
 - **Description**: Human-readable description of the VM
 - **Notes**: Additional notes, instructions, or documentation
 - **AccountId**: Unique identifier for account/profile isolation
-- **ProfileId**: Profile type identifier (gaming, cloud-aws, etc.)
+- **ProfileId**: Profile type identifier (e.g., valorant, eac-generic, battlEye, etc.)
 - **CreationTimestamp**: ISO 8601 timestamp of VM creation
 - **LastUpdatedTimestamp**: ISO 8601 timestamp of last configuration update
 - **SchemaVersion**: Configuration schema version number
@@ -102,7 +102,6 @@ Configuration metadata for tracking and multi-account isolation.
 - **Description**: Number of virtual CPU cores
 - **Recommendations**:
   - Gaming: 6-8 cores
-  - Cloud work: 4 cores
   - Development: 2-4 cores
 
 ### MemorySize (Required)
@@ -112,7 +111,6 @@ Configuration metadata for tracking and multi-account isolation.
 - **Recommendations**:
   - Gaming (high-end): 16384 (16 GB)
   - Gaming (mid-range): 8192 (8 GB)
-  - Cloud work: 8192 (8 GB)
   - Development: 4096 (4 GB)
 
 ### ComPorts (Optional)
@@ -242,7 +240,7 @@ High-level anti-detection preset.
 
 **Usage Guidelines**:
 - vanilla: Development, testing, non-sensitive workloads
-- balanced: Cloud work, light gaming, general use
+- balanced: Light gaming, general use
 - bare-metal: Anti-cheat gaming, security research, maximum stealth
 
 ### ChipsetInformation (Phase 1+)

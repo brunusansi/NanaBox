@@ -4,6 +4,8 @@
 
 The profile system provides pre-configured anti-detection templates optimized for specific use cases. Each profile combines SMBIOS values, anti-detection settings, timing strategies, and hardware configurations tailored for different scenarios.
 
+**Important**: The profile system is focused **exclusively on game / anti-cheat oriented profiles**. Cloud provider profiles (AWS/Azure/GCP) were intentionally removed and are out of scope for this project. This tool is designed for gaming anti-detection, security research, and anti-cheat testing laboratories.
+
 ## Profile Selection
 
 Use the `AntiDetectionProfile` field to select a high-level strategy:
@@ -317,7 +319,6 @@ sudo dmidecode -t baseboard
 - **Development/Testing**: vanilla
 - **General Gaming**: balanced
 - **Anti-Cheat Gaming**: bare-metal
-- **Cloud Work**: balanced (provider-specific)
 
 ### Step 5: Test Incrementally
 1. Start with vanilla profile
