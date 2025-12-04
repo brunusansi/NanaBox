@@ -1010,6 +1010,271 @@ NanaBox::AcpiOverrideConfiguration NanaBox::ToAcpiOverrideConfiguration(
     return Result;
 }
 
+nlohmann::json NanaBox::FromTimingStrategy(
+    NanaBox::TimingStrategy const& Value)
+{
+    if (NanaBox::TimingStrategy::Relaxed == Value)
+    {
+        return "relaxed";
+    }
+    else if (NanaBox::TimingStrategy::Strict == Value)
+    {
+        return "strict";
+    }
+
+    return "off";
+}
+
+NanaBox::TimingStrategy NanaBox::ToTimingStrategy(
+    nlohmann::json const& Value)
+{
+    std::string RawValue = Mile::Json::ToString(Value);
+
+    if (0 == std::strcmp(RawValue.c_str(), "relaxed"))
+    {
+        return NanaBox::TimingStrategy::Relaxed;
+    }
+    else if (0 == std::strcmp(RawValue.c_str(), "strict"))
+    {
+        return NanaBox::TimingStrategy::Strict;
+    }
+
+    return NanaBox::TimingStrategy::Off;
+}
+
+nlohmann::json NanaBox::FromTimingConfiguration(
+    NanaBox::TimingConfiguration const& Value)
+{
+    nlohmann::json Result;
+
+    if (NanaBox::TimingStrategy::Off != Value.Strategy)
+    {
+        Result["Strategy"] = NanaBox::FromTimingStrategy(Value.Strategy);
+    }
+
+    if (Value.NormalizeTSC)
+    {
+        Result["NormalizeTSC"] = true;
+    }
+
+    if (Value.NormalizeAPIC)
+    {
+        Result["NormalizeAPIC"] = true;
+    }
+
+    if (Value.NormalizeHPET)
+    {
+        Result["NormalizeHPET"] = true;
+    }
+
+    return Result;
+}
+
+NanaBox::TimingConfiguration NanaBox::ToTimingConfiguration(
+    nlohmann::json const& Value)
+{
+    NanaBox::TimingConfiguration Result;
+
+    Result.Strategy = NanaBox::ToTimingStrategy(
+        Mile::Json::GetSubKey(Value, "Strategy"));
+
+    Result.NormalizeTSC = Mile::Json::ToBoolean(
+        Mile::Json::GetSubKey(Value, "NormalizeTSC"),
+        Result.NormalizeTSC);
+
+    Result.NormalizeAPIC = Mile::Json::ToBoolean(
+        Mile::Json::GetSubKey(Value, "NormalizeAPIC"),
+        Result.NormalizeAPIC);
+
+    Result.NormalizeHPET = Mile::Json::ToBoolean(
+        Mile::Json::GetSubKey(Value, "NormalizeHPET"),
+        Result.NormalizeHPET);
+
+    return Result;
+}
+
+nlohmann::json NanaBox::FromPciDeviceConfiguration(
+    NanaBox::PciDeviceConfiguration const& Value)
+{
+    nlohmann::json Result;
+
+    if (!Value.DeviceType.empty())
+    {
+        Result["DeviceType"] = Value.DeviceType;
+    }
+
+    if (!Value.VendorId.empty())
+    {
+        Result["VendorId"] = Value.VendorId;
+    }
+
+    if (!Value.DeviceId.empty())
+    {
+        Result["DeviceId"] = Value.DeviceId;
+    }
+
+    if (!Value.SubsystemVendorId.empty())
+    {
+        Result["SubsystemVendorId"] = Value.SubsystemVendorId;
+    }
+
+    if (!Value.SubsystemId.empty())
+    {
+        Result["SubsystemId"] = Value.SubsystemId;
+    }
+
+    return Result;
+}
+
+NanaBox::PciDeviceConfiguration NanaBox::ToPciDeviceConfiguration(
+    nlohmann::json const& Value)
+{
+    NanaBox::PciDeviceConfiguration Result;
+
+    Result.DeviceType = Mile::Json::ToString(
+        Mile::Json::GetSubKey(Value, "DeviceType"),
+        Result.DeviceType);
+
+    Result.VendorId = Mile::Json::ToString(
+        Mile::Json::GetSubKey(Value, "VendorId"),
+        Result.VendorId);
+
+    Result.DeviceId = Mile::Json::ToString(
+        Mile::Json::GetSubKey(Value, "DeviceId"),
+        Result.DeviceId);
+
+    Result.SubsystemVendorId = Mile::Json::ToString(
+        Mile::Json::GetSubKey(Value, "SubsystemVendorId"),
+        Result.SubsystemVendorId);
+
+    Result.SubsystemId = Mile::Json::ToString(
+        Mile::Json::GetSubKey(Value, "SubsystemId"),
+        Result.SubsystemId);
+
+    return Result;
+}
+
+nlohmann::json NanaBox::FromPciConfiguration(
+    NanaBox::PciConfiguration const& Value)
+{
+    nlohmann::json Result;
+
+    if (Value.Enabled)
+    {
+        Result["Enabled"] = true;
+    }
+
+    if (!Value.Devices.empty())
+    {
+        nlohmann::json Devices;
+        for (NanaBox::PciDeviceConfiguration const& Device : Value.Devices)
+        {
+            Devices.push_back(NanaBox::FromPciDeviceConfiguration(Device));
+        }
+        Result["Devices"] = Devices;
+    }
+
+    return Result;
+}
+
+NanaBox::PciConfiguration NanaBox::ToPciConfiguration(
+    nlohmann::json const& Value)
+{
+    NanaBox::PciConfiguration Result;
+
+    Result.Enabled = Mile::Json::ToBoolean(
+        Mile::Json::GetSubKey(Value, "Enabled"),
+        Result.Enabled);
+
+    nlohmann::json Devices = Mile::Json::GetSubKey(Value, "Devices");
+    if (Devices.is_array())
+    {
+        for (nlohmann::json const& Device : Devices)
+        {
+            Result.Devices.push_back(NanaBox::ToPciDeviceConfiguration(Device));
+        }
+    }
+
+    return Result;
+}
+
+nlohmann::json NanaBox::FromVirtualMachineMetadata(
+    NanaBox::VirtualMachineMetadata const& Value)
+{
+    nlohmann::json Result;
+
+    if (!Value.Description.empty())
+    {
+        Result["Description"] = Value.Description;
+    }
+
+    if (!Value.Notes.empty())
+    {
+        Result["Notes"] = Value.Notes;
+    }
+
+    if (!Value.AccountId.empty())
+    {
+        Result["AccountId"] = Value.AccountId;
+    }
+
+    if (!Value.ProfileId.empty())
+    {
+        Result["ProfileId"] = Value.ProfileId;
+    }
+
+    if (!Value.CreationTimestamp.empty())
+    {
+        Result["CreationTimestamp"] = Value.CreationTimestamp;
+    }
+
+    if (!Value.LastUpdatedTimestamp.empty())
+    {
+        Result["LastUpdatedTimestamp"] = Value.LastUpdatedTimestamp;
+    }
+
+    // Always serialize SchemaVersion for clarity
+    Result["SchemaVersion"] = Value.SchemaVersion;
+
+    return Result;
+}
+
+NanaBox::VirtualMachineMetadata NanaBox::ToVirtualMachineMetadata(
+    nlohmann::json const& Value)
+{
+    NanaBox::VirtualMachineMetadata Result;
+
+    Result.Description = Mile::Json::ToString(
+        Mile::Json::GetSubKey(Value, "Description"),
+        Result.Description);
+
+    Result.Notes = Mile::Json::ToString(
+        Mile::Json::GetSubKey(Value, "Notes"),
+        Result.Notes);
+
+    Result.AccountId = Mile::Json::ToString(
+        Mile::Json::GetSubKey(Value, "AccountId"),
+        Result.AccountId);
+
+    Result.ProfileId = Mile::Json::ToString(
+        Mile::Json::GetSubKey(Value, "ProfileId"),
+        Result.ProfileId);
+
+    Result.CreationTimestamp = Mile::Json::ToString(
+        Mile::Json::GetSubKey(Value, "CreationTimestamp"),
+        Result.CreationTimestamp);
+
+    Result.LastUpdatedTimestamp = Mile::Json::ToString(
+        Mile::Json::GetSubKey(Value, "LastUpdatedTimestamp"),
+        Result.LastUpdatedTimestamp);
+
+    Result.SchemaVersion = static_cast<std::uint32_t>(Mile::Json::ToUInt64(
+        Mile::Json::GetSubKey(Value, "SchemaVersion"),
+        Result.SchemaVersion));
+
+    return Result;
+}
+
 nlohmann::json NanaBox::FromVirtualMachineConfiguration(
     NanaBox::VirtualMachineConfiguration const& Value)
 {
@@ -1187,6 +1452,33 @@ nlohmann::json NanaBox::FromVirtualMachineConfiguration(
         }
     }
 
+    {
+        nlohmann::json Timing =
+            NanaBox::FromTimingConfiguration(Value.Timing);
+        if (!Timing.empty())
+        {
+            Result["Timing"] = Timing;
+        }
+    }
+
+    {
+        nlohmann::json Pci =
+            NanaBox::FromPciConfiguration(Value.Pci);
+        if (!Pci.empty())
+        {
+            Result["Pci"] = Pci;
+        }
+    }
+
+    {
+        nlohmann::json Metadata =
+            NanaBox::FromVirtualMachineMetadata(Value.Metadata);
+        if (!Metadata.empty())
+        {
+            Result["Metadata"] = Metadata;
+        }
+    }
+
     return Result;
 }
 
@@ -1316,6 +1608,15 @@ NanaBox::VirtualMachineConfiguration NanaBox::ToVirtualMachineConfiguration(
 
     Result.AcpiOverride = NanaBox::ToAcpiOverrideConfiguration(
         Mile::Json::GetSubKey(Value, "AcpiOverride"));
+
+    Result.Timing = NanaBox::ToTimingConfiguration(
+        Mile::Json::GetSubKey(Value, "Timing"));
+
+    Result.Pci = NanaBox::ToPciConfiguration(
+        Mile::Json::GetSubKey(Value, "Pci"));
+
+    Result.Metadata = NanaBox::ToVirtualMachineMetadata(
+        Mile::Json::GetSubKey(Value, "Metadata"));
 
     return Result;
 }

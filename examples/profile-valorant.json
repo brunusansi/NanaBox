@@ -1,0 +1,84 @@
+{
+    "NanaBox": {
+        "Type": "VirtualMachine",
+        "Version": 1,
+        "GuestType": "Windows",
+        "Name": "Valorant-Gaming",
+        "ProcessorCount": 8,
+        "MemorySize": 16384,
+        "ComPorts": {
+            "UefiConsole": "Disabled"
+        },
+        "Gpu": {
+            "AssignmentMode": "Default",
+            "EnableHostDriverStore": false
+        },
+        "NetworkAdapters": [
+            {
+                "Connected": true,
+                "MacAddress": "D8-9E-F3-12-34-56",
+                "EndpointId": ""
+            }
+        ],
+        "ScsiDevices": [
+            {
+                "Type": "VirtualDisk",
+                "Path": "Valorant.vhdx"
+            },
+            {
+                "Type": "VirtualImage",
+                "Path": ""
+            }
+        ],
+        "SecureBoot": true,
+        "Tpm": true,
+        "GuestStateFile": "Valorant.vmgs",
+        "RuntimeStateFile": "Valorant.vmrs",
+        "ExposeVirtualizationExtensions": false,
+        "Metadata": {
+            "Description": "Valorant gaming VM with Vanguard anti-cheat compatibility",
+            "Notes": "Optimized for Riot Vanguard. Uses Intel Core i7-12700K profile.",
+            "AccountId": "valorant-primary",
+            "ProfileId": "valorant",
+            "SchemaVersion": 1
+        },
+        "AntiDetectionProfile": "bare-metal",
+        "ChipsetInformation": {
+            "Manufacturer": "ASUSTeK COMPUTER INC.",
+            "ProductName": "ROG STRIX Z690-A GAMING WIFI D4",
+            "Version": "Rev 1.xx",
+            "SerialNumber": "MB-1234567890123",
+            "UUID": "03000200-0400-0500-0006-000700080009",
+            "SKUNumber": "SKU1234567890ABC",
+            "Family": "Desktop",
+            "BaseBoardSerialNumber": "200722001234",
+            "ChassisSerialNumber": "CHN-1234567890",
+            "ChassisAssetTag": ""
+        },
+        "CpuId": {
+            "Enabled": true,
+            "HideHypervisor": true,
+            "VendorString": "GenuineIntel",
+            "MaskVirtualizationFeatures": true
+        },
+        "MsrIntercept": {
+            "Enabled": true,
+            "BlockHyperVMsrs": true,
+            "NormalizeTSC": true
+        },
+        "AcpiOverride": {
+            "Enabled": true,
+            "RemoveHyperVDevices": true,
+            "CustomDSDT": ""
+        },
+        "Timing": {
+            "Strategy": "strict",
+            "NormalizeTSC": true,
+            "NormalizeAPIC": true,
+            "NormalizeHPET": true
+        },
+        "Pci": {
+            "Enabled": false
+        }
+    }
+}

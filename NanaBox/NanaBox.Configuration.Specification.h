@@ -197,6 +197,71 @@ namespace NanaBox
         std::string CustomDSDT;                      // TODO(Phase4): Path to custom DSDT table file
     };
 
+    /// <summary>
+    /// Timing normalization strategy
+    /// Phase 1: Configuration schema only (reserved for future use)
+    /// Phase 4: Implementation with timing adjustments
+    /// </summary>
+    enum class TimingStrategy : std::int32_t
+    {
+        Off = 0,        // No timing normalization
+        Relaxed = 1,    // Basic timing adjustments
+        Strict = 2,     // Maximum timing accuracy, may impact performance
+    };
+
+    /// <summary>
+    /// Timing normalization configuration
+    /// Phase 1: Configuration schema only (reserved for future use)
+    /// Phase 4: Implementation for TSC, APIC, HPET normalization
+    /// </summary>
+    struct TimingConfiguration
+    {
+        TimingStrategy Strategy = TimingStrategy::Off;  // Timing normalization strategy
+        bool NormalizeTSC = false;                      // TODO(Phase4): Normalize Time Stamp Counter
+        bool NormalizeAPIC = false;                     // TODO(Phase4): Normalize APIC timer
+        bool NormalizeHPET = false;                     // TODO(Phase4): Normalize High Precision Event Timer
+    };
+
+    /// <summary>
+    /// PCI device configuration entry
+    /// Phase 1: Configuration schema only (reserved for future use)
+    /// Phase 4: Implementation for bare-metal-like PCI topology
+    /// </summary>
+    struct PciDeviceConfiguration
+    {
+        std::string DeviceType;                      // TODO(Phase4): "GPU", "NIC", "Storage", etc.
+        std::string VendorId;                        // TODO(Phase4): PCI vendor ID (hex)
+        std::string DeviceId;                        // TODO(Phase4): PCI device ID (hex)
+        std::string SubsystemVendorId;               // TODO(Phase4): Subsystem vendor ID (hex)
+        std::string SubsystemId;                     // TODO(Phase4): Subsystem ID (hex)
+    };
+
+    /// <summary>
+    /// PCI topology configuration
+    /// Phase 1: Configuration schema only (reserved for future use)
+    /// Phase 4: Implementation for realistic PCI device layout
+    /// </summary>
+    struct PciConfiguration
+    {
+        bool Enabled = false;                        // Enable PCI topology customization
+        std::vector<PciDeviceConfiguration> Devices; // TODO(Phase4): Custom PCI devices
+    };
+
+    /// <summary>
+    /// VM metadata for tracking and isolation
+    /// Phase 1: Configuration schema extension
+    /// </summary>
+    struct VirtualMachineMetadata
+    {
+        std::string Description;                     // User-friendly VM description
+        std::string Notes;                           // Additional notes
+        std::string AccountId;                       // Account/profile identifier for isolation
+        std::string ProfileId;                       // Profile identifier (gaming, cloud, etc.)
+        std::string CreationTimestamp;               // ISO 8601 timestamp
+        std::string LastUpdatedTimestamp;            // ISO 8601 timestamp
+        std::uint32_t SchemaVersion = 1;             // Configuration schema version
+    };
+
     struct VirtualMachineConfiguration
     {
         std::uint32_t Version = 1;
@@ -223,10 +288,13 @@ namespace NanaBox
         
         // Anti-Detection Edition fields (Phase 1+)
         // Note: ChipsetInformation already serves as SMBIOS configuration
+        VirtualMachineMetadata Metadata;
         AntiDetectionProfile AntiDetectionProfile = AntiDetectionProfile::Vanilla;
         CpuIdConfiguration CpuId;
         MsrInterceptConfiguration MsrIntercept;
         AcpiOverrideConfiguration AcpiOverride;
+        TimingConfiguration Timing;
+        PciConfiguration Pci;
     };
 }
 

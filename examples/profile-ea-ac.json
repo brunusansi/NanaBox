@@ -1,0 +1,84 @@
+{
+    "NanaBox": {
+        "Type": "VirtualMachine",
+        "Version": 1,
+        "GuestType": "Windows",
+        "Name": "EA-Gaming",
+        "ProcessorCount": 8,
+        "MemorySize": 16384,
+        "ComPorts": {
+            "UefiConsole": "Disabled"
+        },
+        "Gpu": {
+            "AssignmentMode": "Default",
+            "EnableHostDriverStore": false
+        },
+        "NetworkAdapters": [
+            {
+                "Connected": true,
+                "MacAddress": "54-BF-64-12-34-AB",
+                "EndpointId": ""
+            }
+        ],
+        "ScsiDevices": [
+            {
+                "Type": "VirtualDisk",
+                "Path": "EA-Gaming.vhdx"
+            },
+            {
+                "Type": "VirtualImage",
+                "Path": ""
+            }
+        ],
+        "SecureBoot": true,
+        "Tpm": true,
+        "GuestStateFile": "EA-Gaming.vmgs",
+        "RuntimeStateFile": "EA-Gaming.vmrs",
+        "ExposeVirtualizationExtensions": false,
+        "Metadata": {
+            "Description": "EA Games VM with EA Anti-Cheat compatibility",
+            "Notes": "Optimized for EA Anti-Cheat. Uses Intel Core i7-13700K profile.",
+            "AccountId": "ea-player-primary",
+            "ProfileId": "ea-ac",
+            "SchemaVersion": 1
+        },
+        "AntiDetectionProfile": "bare-metal",
+        "ChipsetInformation": {
+            "Manufacturer": "ASRock",
+            "ProductName": "Z690 Steel Legend WiFi 6E",
+            "Version": "1.0",
+            "SerialNumber": "M80-AB001234567890",
+            "UUID": "48000200-8e00-11ec-ba2f-7c10c9aabbcc",
+            "SKUNumber": "Z690 Steel Legend WiFi 6E",
+            "Family": "To be filled by O.E.M.",
+            "BaseBoardSerialNumber": "M80-AB0012345678901",
+            "ChassisSerialNumber": "To be filled by O.E.M.",
+            "ChassisAssetTag": ""
+        },
+        "CpuId": {
+            "Enabled": true,
+            "HideHypervisor": true,
+            "VendorString": "GenuineIntel",
+            "MaskVirtualizationFeatures": true
+        },
+        "MsrIntercept": {
+            "Enabled": true,
+            "BlockHyperVMsrs": true,
+            "NormalizeTSC": true
+        },
+        "AcpiOverride": {
+            "Enabled": true,
+            "RemoveHyperVDevices": true,
+            "CustomDSDT": ""
+        },
+        "Timing": {
+            "Strategy": "strict",
+            "NormalizeTSC": true,
+            "NormalizeAPIC": true,
+            "NormalizeHPET": true
+        },
+        "Pci": {
+            "Enabled": false
+        }
+    }
+}

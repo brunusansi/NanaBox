@@ -1,0 +1,84 @@
+{
+    "NanaBox": {
+        "Type": "VirtualMachine",
+        "Version": 1,
+        "GuestType": "Windows",
+        "Name": "Roblox-Gaming",
+        "ProcessorCount": 6,
+        "MemorySize": 8192,
+        "ComPorts": {
+            "UefiConsole": "Disabled"
+        },
+        "Gpu": {
+            "AssignmentMode": "Default",
+            "EnableHostDriverStore": false
+        },
+        "NetworkAdapters": [
+            {
+                "Connected": true,
+                "MacAddress": "AC-DE-48-00-11-22",
+                "EndpointId": ""
+            }
+        ],
+        "ScsiDevices": [
+            {
+                "Type": "VirtualDisk",
+                "Path": "Roblox.vhdx"
+            },
+            {
+                "Type": "VirtualImage",
+                "Path": ""
+            }
+        ],
+        "SecureBoot": true,
+        "Tpm": false,
+        "GuestStateFile": "Roblox.vmgs",
+        "RuntimeStateFile": "Roblox.vmrs",
+        "ExposeVirtualizationExtensions": false,
+        "Metadata": {
+            "Description": "Roblox gaming VM with Byfron anti-cheat compatibility",
+            "Notes": "Optimized for Roblox Byfron. Uses AMD Ryzen 5 5600X profile.",
+            "AccountId": "roblox-player1",
+            "ProfileId": "roblox",
+            "SchemaVersion": 1
+        },
+        "AntiDetectionProfile": "balanced",
+        "ChipsetInformation": {
+            "Manufacturer": "Gigabyte Technology Co., Ltd.",
+            "ProductName": "B550 AORUS ELITE V2",
+            "Version": "1.0",
+            "SerialNumber": "GB-4567890123456",
+            "UUID": "12345678-90ab-cdef-1234-567890abcdef",
+            "SKUNumber": "Default string",
+            "Family": "B550 MB",
+            "BaseBoardSerialNumber": "190520123456",
+            "ChassisSerialNumber": "Default string",
+            "ChassisAssetTag": ""
+        },
+        "CpuId": {
+            "Enabled": true,
+            "HideHypervisor": true,
+            "VendorString": "AuthenticAMD",
+            "MaskVirtualizationFeatures": true
+        },
+        "MsrIntercept": {
+            "Enabled": true,
+            "BlockHyperVMsrs": true,
+            "NormalizeTSC": false
+        },
+        "AcpiOverride": {
+            "Enabled": true,
+            "RemoveHyperVDevices": true,
+            "CustomDSDT": ""
+        },
+        "Timing": {
+            "Strategy": "relaxed",
+            "NormalizeTSC": false,
+            "NormalizeAPIC": false,
+            "NormalizeHPET": false
+        },
+        "Pci": {
+            "Enabled": false
+        }
+    }
+}
