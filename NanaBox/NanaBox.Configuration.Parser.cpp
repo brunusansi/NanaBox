@@ -872,6 +872,376 @@ NanaBox::Plan9ShareConfiguration NanaBox::ToPlan9ShareConfiguration(
     return Result;
 }
 
+// Phase 2: SMBIOS Baseboard parsers
+nlohmann::json NanaBox::FromSmbiosBaseboardConfiguration(
+    NanaBox::SmbiosBaseboardConfiguration const& Value)
+{
+    nlohmann::json Result;
+
+    if (!Value.Manufacturer.empty())
+    {
+        Result["Manufacturer"] = Value.Manufacturer;
+    }
+
+    if (!Value.Product.empty())
+    {
+        Result["Product"] = Value.Product;
+    }
+
+    if (!Value.Version.empty())
+    {
+        Result["Version"] = Value.Version;
+    }
+
+    if (!Value.SerialNumber.empty())
+    {
+        Result["SerialNumber"] = Value.SerialNumber;
+    }
+
+    return Result;
+}
+
+NanaBox::SmbiosBaseboardConfiguration NanaBox::ToSmbiosBaseboardConfiguration(
+    nlohmann::json const& Value)
+{
+    NanaBox::SmbiosBaseboardConfiguration Result;
+
+    Result.Manufacturer = Mile::Json::ToString(
+        Mile::Json::GetSubKey(Value, "Manufacturer"),
+        Result.Manufacturer);
+
+    Result.Product = Mile::Json::ToString(
+        Mile::Json::GetSubKey(Value, "Product"),
+        Result.Product);
+
+    Result.Version = Mile::Json::ToString(
+        Mile::Json::GetSubKey(Value, "Version"),
+        Result.Version);
+
+    Result.SerialNumber = Mile::Json::ToString(
+        Mile::Json::GetSubKey(Value, "SerialNumber"),
+        Result.SerialNumber);
+
+    return Result;
+}
+
+// Phase 2: SMBIOS Chassis parsers
+nlohmann::json NanaBox::FromSmbiosChassisConfiguration(
+    NanaBox::SmbiosChassisConfiguration const& Value)
+{
+    nlohmann::json Result;
+
+    if (!Value.Type.empty())
+    {
+        Result["Type"] = Value.Type;
+    }
+
+    if (!Value.SerialNumber.empty())
+    {
+        Result["SerialNumber"] = Value.SerialNumber;
+    }
+
+    return Result;
+}
+
+NanaBox::SmbiosChassisConfiguration NanaBox::ToSmbiosChassisConfiguration(
+    nlohmann::json const& Value)
+{
+    NanaBox::SmbiosChassisConfiguration Result;
+
+    Result.Type = Mile::Json::ToString(
+        Mile::Json::GetSubKey(Value, "Type"),
+        Result.Type);
+
+    Result.SerialNumber = Mile::Json::ToString(
+        Mile::Json::GetSubKey(Value, "SerialNumber"),
+        Result.SerialNumber);
+
+    return Result;
+}
+
+// Phase 2: SMBIOS Configuration parsers
+nlohmann::json NanaBox::FromSmbiosConfiguration(
+    NanaBox::SmbiosConfiguration const& Value)
+{
+    nlohmann::json Result;
+
+    if (Value.Enabled)
+    {
+        Result["Enabled"] = true;
+    }
+
+    if (!Value.Vendor.empty())
+    {
+        Result["Vendor"] = Value.Vendor;
+    }
+
+    if (!Value.Product.empty())
+    {
+        Result["Product"] = Value.Product;
+    }
+
+    if (!Value.Version.empty())
+    {
+        Result["Version"] = Value.Version;
+    }
+
+    if (!Value.SerialNumber.empty())
+    {
+        Result["SerialNumber"] = Value.SerialNumber;
+    }
+
+    if (!Value.SkuNumber.empty())
+    {
+        Result["SkuNumber"] = Value.SkuNumber;
+    }
+
+    if (!Value.Family.empty())
+    {
+        Result["Family"] = Value.Family;
+    }
+
+    nlohmann::json BaseboardJson = NanaBox::FromSmbiosBaseboardConfiguration(Value.Baseboard);
+    if (!BaseboardJson.empty())
+    {
+        Result["Baseboard"] = BaseboardJson;
+    }
+
+    nlohmann::json ChassisJson = NanaBox::FromSmbiosChassisConfiguration(Value.Chassis);
+    if (!ChassisJson.empty())
+    {
+        Result["Chassis"] = ChassisJson;
+    }
+
+    if (!Value.Uuid.empty())
+    {
+        Result["Uuid"] = Value.Uuid;
+    }
+
+    if (!Value.OemStrings.empty())
+    {
+        Result["OemStrings"] = Value.OemStrings;
+    }
+
+    if (!Value.Template.empty())
+    {
+        Result["Template"] = Value.Template;
+    }
+
+    return Result;
+}
+
+NanaBox::SmbiosConfiguration NanaBox::ToSmbiosConfiguration(
+    nlohmann::json const& Value)
+{
+    NanaBox::SmbiosConfiguration Result;
+
+    Result.Enabled = Mile::Json::ToBoolean(
+        Mile::Json::GetSubKey(Value, "Enabled"),
+        Result.Enabled);
+
+    Result.Vendor = Mile::Json::ToString(
+        Mile::Json::GetSubKey(Value, "Vendor"),
+        Result.Vendor);
+
+    Result.Product = Mile::Json::ToString(
+        Mile::Json::GetSubKey(Value, "Product"),
+        Result.Product);
+
+    Result.Version = Mile::Json::ToString(
+        Mile::Json::GetSubKey(Value, "Version"),
+        Result.Version);
+
+    Result.SerialNumber = Mile::Json::ToString(
+        Mile::Json::GetSubKey(Value, "SerialNumber"),
+        Result.SerialNumber);
+
+    Result.SkuNumber = Mile::Json::ToString(
+        Mile::Json::GetSubKey(Value, "SkuNumber"),
+        Result.SkuNumber);
+
+    Result.Family = Mile::Json::ToString(
+        Mile::Json::GetSubKey(Value, "Family"),
+        Result.Family);
+
+    Result.Baseboard = NanaBox::ToSmbiosBaseboardConfiguration(
+        Mile::Json::GetSubKey(Value, "Baseboard"));
+
+    Result.Chassis = NanaBox::ToSmbiosChassisConfiguration(
+        Mile::Json::GetSubKey(Value, "Chassis"));
+
+    Result.Uuid = Mile::Json::ToString(
+        Mile::Json::GetSubKey(Value, "Uuid"),
+        Result.Uuid);
+
+    for (nlohmann::json const& OemString : Mile::Json::ToArray(
+        Mile::Json::GetSubKey(Value, "OemStrings")))
+    {
+        std::string OemStringValue = Mile::Json::ToString(OemString);
+        if (!OemStringValue.empty())
+        {
+            Result.OemStrings.push_back(OemStringValue);
+        }
+    }
+
+    Result.Template = Mile::Json::ToString(
+        Mile::Json::GetSubKey(Value, "Template"),
+        Result.Template);
+
+    return Result;
+}
+
+// Phase 2: ACPI Configuration parsers
+nlohmann::json NanaBox::FromAcpiConfiguration(
+    NanaBox::AcpiConfiguration const& Value)
+{
+    nlohmann::json Result;
+
+    if (Value.Enabled)
+    {
+        Result["Enabled"] = true;
+    }
+
+    if (!Value.OemId.empty())
+    {
+        Result["OemId"] = Value.OemId;
+    }
+
+    if (!Value.OemTableId.empty())
+    {
+        Result["OemTableId"] = Value.OemTableId;
+    }
+
+    if (!Value.OverrideTables.empty())
+    {
+        Result["OverrideTables"] = Value.OverrideTables;
+    }
+
+    if (Value.FixHyperVSignatures)
+    {
+        Result["FixHyperVSignatures"] = true;
+    }
+
+    if (Value.SpoofBattery)
+    {
+        Result["SpoofBattery"] = true;
+    }
+
+    if (Value.SpoofDock)
+    {
+        Result["SpoofDock"] = true;
+    }
+
+    return Result;
+}
+
+NanaBox::AcpiConfiguration NanaBox::ToAcpiConfiguration(
+    nlohmann::json const& Value)
+{
+    NanaBox::AcpiConfiguration Result;
+
+    Result.Enabled = Mile::Json::ToBoolean(
+        Mile::Json::GetSubKey(Value, "Enabled"),
+        Result.Enabled);
+
+    Result.OemId = Mile::Json::ToString(
+        Mile::Json::GetSubKey(Value, "OemId"),
+        Result.OemId);
+
+    Result.OemTableId = Mile::Json::ToString(
+        Mile::Json::GetSubKey(Value, "OemTableId"),
+        Result.OemTableId);
+
+    for (nlohmann::json const& OverrideTable : Mile::Json::ToArray(
+        Mile::Json::GetSubKey(Value, "OverrideTables")))
+    {
+        std::string OverrideTablePath = Mile::Json::ToString(OverrideTable);
+        if (!OverrideTablePath.empty())
+        {
+            Result.OverrideTables.push_back(OverrideTablePath);
+        }
+    }
+
+    Result.FixHyperVSignatures = Mile::Json::ToBoolean(
+        Mile::Json::GetSubKey(Value, "FixHyperVSignatures"),
+        Result.FixHyperVSignatures);
+
+    Result.SpoofBattery = Mile::Json::ToBoolean(
+        Mile::Json::GetSubKey(Value, "SpoofBattery"),
+        Result.SpoofBattery);
+
+    Result.SpoofDock = Mile::Json::ToBoolean(
+        Mile::Json::GetSubKey(Value, "SpoofDock"),
+        Result.SpoofDock);
+
+    return Result;
+}
+
+// Phase 3: CPUID Leaf Override parsers
+nlohmann::json NanaBox::FromCpuIdLeafOverride(
+    NanaBox::CpuIdLeafOverride const& Value)
+{
+    nlohmann::json Result;
+
+    Result["Leaf"] = Value.Leaf;
+    Result["Subleaf"] = Value.Subleaf;
+
+    if (!Value.Eax.empty())
+    {
+        Result["Eax"] = Value.Eax;
+    }
+
+    if (!Value.Ebx.empty())
+    {
+        Result["Ebx"] = Value.Ebx;
+    }
+
+    if (!Value.Ecx.empty())
+    {
+        Result["Ecx"] = Value.Ecx;
+    }
+
+    if (!Value.Edx.empty())
+    {
+        Result["Edx"] = Value.Edx;
+    }
+
+    return Result;
+}
+
+NanaBox::CpuIdLeafOverride NanaBox::ToCpuIdLeafOverride(
+    nlohmann::json const& Value)
+{
+    NanaBox::CpuIdLeafOverride Result;
+
+    Result.Leaf = Mile::Json::ToUInt32(
+        Mile::Json::GetSubKey(Value, "Leaf"),
+        Result.Leaf);
+
+    Result.Subleaf = Mile::Json::ToUInt32(
+        Mile::Json::GetSubKey(Value, "Subleaf"),
+        Result.Subleaf);
+
+    Result.Eax = Mile::Json::ToString(
+        Mile::Json::GetSubKey(Value, "Eax"),
+        Result.Eax);
+
+    Result.Ebx = Mile::Json::ToString(
+        Mile::Json::GetSubKey(Value, "Ebx"),
+        Result.Ebx);
+
+    Result.Ecx = Mile::Json::ToString(
+        Mile::Json::GetSubKey(Value, "Ecx"),
+        Result.Ecx);
+
+    Result.Edx = Mile::Json::ToString(
+        Mile::Json::GetSubKey(Value, "Edx"),
+        Result.Edx);
+
+    return Result;
+}
+
+// Phase 3: Extended CPUID Configuration parsers
 nlohmann::json NanaBox::FromCpuIdConfiguration(
     NanaBox::CpuIdConfiguration const& Value)
 {
@@ -882,19 +1252,39 @@ nlohmann::json NanaBox::FromCpuIdConfiguration(
         Result["Enabled"] = true;
     }
 
-    if (Value.HideHypervisor)
+    if (Value.HideHypervisorBit)
     {
-        Result["HideHypervisor"] = true;
+        Result["HideHypervisorBit"] = true;
     }
 
-    if (!Value.VendorString.empty())
+    if (!Value.VendorId.empty())
     {
-        Result["VendorString"] = Value.VendorString;
+        Result["VendorId"] = Value.VendorId;
     }
 
-    if (Value.MaskVirtualizationFeatures)
+    if (!Value.BrandString.empty())
     {
-        Result["MaskVirtualizationFeatures"] = true;
+        Result["BrandString"] = Value.BrandString;
+    }
+
+    if (!Value.FeatureMasks.empty())
+    {
+        Result["FeatureMasks"] = Value.FeatureMasks;
+    }
+
+    if (!Value.LeafOverrides.empty())
+    {
+        nlohmann::json LeafOverridesArray = nlohmann::json::array();
+        for (auto const& LeafOverride : Value.LeafOverrides)
+        {
+            LeafOverridesArray.push_back(NanaBox::FromCpuIdLeafOverride(LeafOverride));
+        }
+        Result["LeafOverrides"] = LeafOverridesArray;
+    }
+
+    if (!Value.Templates.empty())
+    {
+        Result["Templates"] = Value.Templates;
     }
 
     return Result;
@@ -909,21 +1299,94 @@ NanaBox::CpuIdConfiguration NanaBox::ToCpuIdConfiguration(
         Mile::Json::GetSubKey(Value, "Enabled"),
         Result.Enabled);
 
-    Result.HideHypervisor = Mile::Json::ToBoolean(
-        Mile::Json::GetSubKey(Value, "HideHypervisor"),
-        Result.HideHypervisor);
+    Result.HideHypervisorBit = Mile::Json::ToBoolean(
+        Mile::Json::GetSubKey(Value, "HideHypervisorBit"),
+        Result.HideHypervisorBit);
 
-    Result.VendorString = Mile::Json::ToString(
-        Mile::Json::GetSubKey(Value, "VendorString"),
-        Result.VendorString);
+    Result.VendorId = Mile::Json::ToString(
+        Mile::Json::GetSubKey(Value, "VendorId"),
+        Result.VendorId);
 
-    Result.MaskVirtualizationFeatures = Mile::Json::ToBoolean(
-        Mile::Json::GetSubKey(Value, "MaskVirtualizationFeatures"),
-        Result.MaskVirtualizationFeatures);
+    Result.BrandString = Mile::Json::ToString(
+        Mile::Json::GetSubKey(Value, "BrandString"),
+        Result.BrandString);
+
+    nlohmann::json FeatureMasksJson = Mile::Json::GetSubKey(Value, "FeatureMasks");
+    if (FeatureMasksJson.is_object())
+    {
+        for (auto& [key, val] : FeatureMasksJson.items())
+        {
+            if (val.is_string())
+            {
+                Result.FeatureMasks[key] = val.get<std::string>();
+            }
+        }
+    }
+
+    for (nlohmann::json const& LeafOverride : Mile::Json::ToArray(
+        Mile::Json::GetSubKey(Value, "LeafOverrides")))
+    {
+        Result.LeafOverrides.push_back(NanaBox::ToCpuIdLeafOverride(LeafOverride));
+    }
+
+    for (nlohmann::json const& Template : Mile::Json::ToArray(
+        Mile::Json::GetSubKey(Value, "Templates")))
+    {
+        std::string TemplateString = Mile::Json::ToString(Template);
+        if (!TemplateString.empty())
+        {
+            Result.Templates.push_back(TemplateString);
+        }
+    }
 
     return Result;
 }
 
+// Phase 3: MSR Rule parsers
+nlohmann::json NanaBox::FromMsrRule(
+    NanaBox::MsrRule const& Value)
+{
+    nlohmann::json Result;
+
+    if (!Value.Msr.empty())
+    {
+        Result["Msr"] = Value.Msr;
+    }
+
+    if (!Value.Mode.empty())
+    {
+        Result["Mode"] = Value.Mode;
+    }
+
+    if (!Value.FakeValue.empty())
+    {
+        Result["FakeValue"] = Value.FakeValue;
+    }
+
+    return Result;
+}
+
+NanaBox::MsrRule NanaBox::ToMsrRule(
+    nlohmann::json const& Value)
+{
+    NanaBox::MsrRule Result;
+
+    Result.Msr = Mile::Json::ToString(
+        Mile::Json::GetSubKey(Value, "Msr"),
+        Result.Msr);
+
+    Result.Mode = Mile::Json::ToString(
+        Mile::Json::GetSubKey(Value, "Mode"),
+        Result.Mode);
+
+    Result.FakeValue = Mile::Json::ToString(
+        Mile::Json::GetSubKey(Value, "FakeValue"),
+        Result.FakeValue);
+
+    return Result;
+}
+
+// Phase 3: Extended MSR Intercept Configuration parsers
 nlohmann::json NanaBox::FromMsrInterceptConfiguration(
     NanaBox::MsrInterceptConfiguration const& Value)
 {
@@ -934,14 +1397,19 @@ nlohmann::json NanaBox::FromMsrInterceptConfiguration(
         Result["Enabled"] = true;
     }
 
-    if (Value.BlockHyperVMsrs)
+    if (!Value.Rules.empty())
     {
-        Result["BlockHyperVMsrs"] = true;
+        nlohmann::json RulesArray = nlohmann::json::array();
+        for (auto const& Rule : Value.Rules)
+        {
+            RulesArray.push_back(NanaBox::FromMsrRule(Rule));
+        }
+        Result["Rules"] = RulesArray;
     }
 
-    if (Value.NormalizeTSC)
+    if (!Value.Template.empty())
     {
-        Result["NormalizeTSC"] = true;
+        Result["Template"] = Value.Template;
     }
 
     return Result;
@@ -956,13 +1424,15 @@ NanaBox::MsrInterceptConfiguration NanaBox::ToMsrInterceptConfiguration(
         Mile::Json::GetSubKey(Value, "Enabled"),
         Result.Enabled);
 
-    Result.BlockHyperVMsrs = Mile::Json::ToBoolean(
-        Mile::Json::GetSubKey(Value, "BlockHyperVMsrs"),
-        Result.BlockHyperVMsrs);
+    for (nlohmann::json const& Rule : Mile::Json::ToArray(
+        Mile::Json::GetSubKey(Value, "Rules")))
+    {
+        Result.Rules.push_back(NanaBox::ToMsrRule(Rule));
+    }
 
-    Result.NormalizeTSC = Mile::Json::ToBoolean(
-        Mile::Json::GetSubKey(Value, "NormalizeTSC"),
-        Result.NormalizeTSC);
+    Result.Template = Mile::Json::ToString(
+        Mile::Json::GetSubKey(Value, "Template"),
+        Result.Template);
 
     return Result;
 }
@@ -1010,6 +1480,179 @@ NanaBox::AcpiOverrideConfiguration NanaBox::ToAcpiOverrideConfiguration(
     return Result;
 }
 
+// Phase 4: Timing Mode parsers
+nlohmann::json NanaBox::FromTimingMode(
+    NanaBox::TimingMode const& Value)
+{
+    if (NanaBox::TimingMode::Relaxed == Value)
+    {
+        return "relaxed";
+    }
+    else if (NanaBox::TimingMode::Balanced == Value)
+    {
+        return "balanced";
+    }
+    else if (NanaBox::TimingMode::Strict == Value)
+    {
+        return "strict";
+    }
+
+    return "off";
+}
+
+NanaBox::TimingMode NanaBox::ToTimingMode(
+    nlohmann::json const& Value)
+{
+    std::string RawValue = Mile::Json::ToString(Value);
+
+    if (0 == std::strcmp(RawValue.c_str(), "relaxed"))
+    {
+        return NanaBox::TimingMode::Relaxed;
+    }
+    else if (0 == std::strcmp(RawValue.c_str(), "balanced"))
+    {
+        return NanaBox::TimingMode::Balanced;
+    }
+    else if (0 == std::strcmp(RawValue.c_str(), "strict"))
+    {
+        return NanaBox::TimingMode::Strict;
+    }
+
+    return NanaBox::TimingMode::Off;
+}
+
+// Phase 4: TSC Configuration parsers
+nlohmann::json NanaBox::FromTscConfiguration(
+    NanaBox::TscConfiguration const& Value)
+{
+    nlohmann::json Result;
+
+    if (Value.NormalizeFrequency)
+    {
+        Result["NormalizeFrequency"] = true;
+    }
+
+    if (Value.TargetFrequencyMHz > 0)
+    {
+        Result["TargetFrequencyMHz"] = Value.TargetFrequencyMHz;
+    }
+
+    if (!Value.JitterModel.empty())
+    {
+        Result["JitterModel"] = Value.JitterModel;
+    }
+
+    return Result;
+}
+
+NanaBox::TscConfiguration NanaBox::ToTscConfiguration(
+    nlohmann::json const& Value)
+{
+    NanaBox::TscConfiguration Result;
+
+    Result.NormalizeFrequency = Mile::Json::ToBoolean(
+        Mile::Json::GetSubKey(Value, "NormalizeFrequency"),
+        Result.NormalizeFrequency);
+
+    Result.TargetFrequencyMHz = Mile::Json::ToUInt32(
+        Mile::Json::GetSubKey(Value, "TargetFrequencyMHz"),
+        Result.TargetFrequencyMHz);
+
+    Result.JitterModel = Mile::Json::ToString(
+        Mile::Json::GetSubKey(Value, "JitterModel"),
+        Result.JitterModel);
+
+    return Result;
+}
+
+// Phase 4: QPC Configuration parsers
+nlohmann::json NanaBox::FromQpcConfiguration(
+    NanaBox::QpcConfiguration const& Value)
+{
+    nlohmann::json Result;
+
+    if (!Value.Backend.empty())
+    {
+        Result["Backend"] = Value.Backend;
+    }
+
+    if (Value.StabilityHints)
+    {
+        Result["StabilityHints"] = true;
+    }
+
+    return Result;
+}
+
+NanaBox::QpcConfiguration NanaBox::ToQpcConfiguration(
+    nlohmann::json const& Value)
+{
+    NanaBox::QpcConfiguration Result;
+
+    Result.Backend = Mile::Json::ToString(
+        Mile::Json::GetSubKey(Value, "Backend"),
+        Result.Backend);
+
+    Result.StabilityHints = Mile::Json::ToBoolean(
+        Mile::Json::GetSubKey(Value, "StabilityHints"),
+        Result.StabilityHints);
+
+    return Result;
+}
+
+// Phase 4: Extended Timing Configuration parsers
+nlohmann::json NanaBox::FromTimingConfiguration(
+    NanaBox::TimingConfiguration const& Value)
+{
+    nlohmann::json Result;
+
+    if (Value.Enabled)
+    {
+        Result["Enabled"] = true;
+    }
+
+    if (NanaBox::TimingMode::Off != Value.Mode)
+    {
+        Result["Mode"] = NanaBox::FromTimingMode(Value.Mode);
+    }
+
+    nlohmann::json TscJson = NanaBox::FromTscConfiguration(Value.Tsc);
+    if (!TscJson.empty())
+    {
+        Result["Tsc"] = TscJson;
+    }
+
+    nlohmann::json QpcJson = NanaBox::FromQpcConfiguration(Value.Qpc);
+    if (!QpcJson.empty())
+    {
+        Result["Qpc"] = QpcJson;
+    }
+
+    return Result;
+}
+
+NanaBox::TimingConfiguration NanaBox::ToTimingConfiguration(
+    nlohmann::json const& Value)
+{
+    NanaBox::TimingConfiguration Result;
+
+    Result.Enabled = Mile::Json::ToBoolean(
+        Mile::Json::GetSubKey(Value, "Enabled"),
+        Result.Enabled);
+
+    Result.Mode = NanaBox::ToTimingMode(
+        Mile::Json::GetSubKey(Value, "Mode"));
+
+    Result.Tsc = NanaBox::ToTscConfiguration(
+        Mile::Json::GetSubKey(Value, "Tsc"));
+
+    Result.Qpc = NanaBox::ToQpcConfiguration(
+        Mile::Json::GetSubKey(Value, "Qpc"));
+
+    return Result;
+}
+
+// Legacy Timing Strategy parsers (backward compatibility)
 nlohmann::json NanaBox::FromTimingStrategy(
     NanaBox::TimingStrategy const& Value)
 {
@@ -1042,65 +1685,15 @@ NanaBox::TimingStrategy NanaBox::ToTimingStrategy(
     return NanaBox::TimingStrategy::Off;
 }
 
-nlohmann::json NanaBox::FromTimingConfiguration(
-    NanaBox::TimingConfiguration const& Value)
-{
-    nlohmann::json Result;
-
-    if (NanaBox::TimingStrategy::Off != Value.Strategy)
-    {
-        Result["Strategy"] = NanaBox::FromTimingStrategy(Value.Strategy);
-    }
-
-    if (Value.NormalizeTSC)
-    {
-        Result["NormalizeTSC"] = true;
-    }
-
-    if (Value.NormalizeAPIC)
-    {
-        Result["NormalizeAPIC"] = true;
-    }
-
-    if (Value.NormalizeHPET)
-    {
-        Result["NormalizeHPET"] = true;
-    }
-
-    return Result;
-}
-
-NanaBox::TimingConfiguration NanaBox::ToTimingConfiguration(
-    nlohmann::json const& Value)
-{
-    NanaBox::TimingConfiguration Result;
-
-    Result.Strategy = NanaBox::ToTimingStrategy(
-        Mile::Json::GetSubKey(Value, "Strategy"));
-
-    Result.NormalizeTSC = Mile::Json::ToBoolean(
-        Mile::Json::GetSubKey(Value, "NormalizeTSC"),
-        Result.NormalizeTSC);
-
-    Result.NormalizeAPIC = Mile::Json::ToBoolean(
-        Mile::Json::GetSubKey(Value, "NormalizeAPIC"),
-        Result.NormalizeAPIC);
-
-    Result.NormalizeHPET = Mile::Json::ToBoolean(
-        Mile::Json::GetSubKey(Value, "NormalizeHPET"),
-        Result.NormalizeHPET);
-
-    return Result;
-}
-
+// Phase 4: Extended PCI Device Configuration parsers
 nlohmann::json NanaBox::FromPciDeviceConfiguration(
     NanaBox::PciDeviceConfiguration const& Value)
 {
     nlohmann::json Result;
 
-    if (!Value.DeviceType.empty())
+    if (!Value.Class.empty())
     {
-        Result["DeviceType"] = Value.DeviceType;
+        Result["Class"] = Value.Class;
     }
 
     if (!Value.VendorId.empty())
@@ -1123,6 +1716,11 @@ nlohmann::json NanaBox::FromPciDeviceConfiguration(
         Result["SubsystemId"] = Value.SubsystemId;
     }
 
+    if (!Value.Description.empty())
+    {
+        Result["Description"] = Value.Description;
+    }
+
     return Result;
 }
 
@@ -1131,9 +1729,9 @@ NanaBox::PciDeviceConfiguration NanaBox::ToPciDeviceConfiguration(
 {
     NanaBox::PciDeviceConfiguration Result;
 
-    Result.DeviceType = Mile::Json::ToString(
-        Mile::Json::GetSubKey(Value, "DeviceType"),
-        Result.DeviceType);
+    Result.Class = Mile::Json::ToString(
+        Mile::Json::GetSubKey(Value, "Class"),
+        Result.Class);
 
     Result.VendorId = Mile::Json::ToString(
         Mile::Json::GetSubKey(Value, "VendorId"),
@@ -1151,9 +1749,14 @@ NanaBox::PciDeviceConfiguration NanaBox::ToPciDeviceConfiguration(
         Mile::Json::GetSubKey(Value, "SubsystemId"),
         Result.SubsystemId);
 
+    Result.Description = Mile::Json::ToString(
+        Mile::Json::GetSubKey(Value, "Description"),
+        Result.Description);
+
     return Result;
 }
 
+// Phase 4: Extended PCI Configuration parsers
 nlohmann::json NanaBox::FromPciConfiguration(
     NanaBox::PciConfiguration const& Value)
 {
@@ -1162,6 +1765,11 @@ nlohmann::json NanaBox::FromPciConfiguration(
     if (Value.Enabled)
     {
         Result["Enabled"] = true;
+    }
+
+    if (!Value.LayoutTemplate.empty())
+    {
+        Result["LayoutTemplate"] = Value.LayoutTemplate;
     }
 
     if (!Value.Devices.empty())
@@ -1185,6 +1793,10 @@ NanaBox::PciConfiguration NanaBox::ToPciConfiguration(
     Result.Enabled = Mile::Json::ToBoolean(
         Mile::Json::GetSubKey(Value, "Enabled"),
         Result.Enabled);
+
+    Result.LayoutTemplate = Mile::Json::ToString(
+        Mile::Json::GetSubKey(Value, "LayoutTemplate"),
+        Result.LayoutTemplate);
 
     nlohmann::json Devices = Mile::Json::GetSubKey(Value, "Devices");
     if (Devices.is_array())
@@ -1425,6 +2037,25 @@ nlohmann::json NanaBox::FromVirtualMachineConfiguration(
             NanaBox::FromAntiDetectionProfile(Value.AntiDetectionProfile);
     }
 
+    // Phase 2+ Extended Anti-Detection fields
+    {
+        nlohmann::json Smbios =
+            NanaBox::FromSmbiosConfiguration(Value.Smbios);
+        if (!Smbios.empty())
+        {
+            Result["Smbios"] = Smbios;
+        }
+    }
+
+    {
+        nlohmann::json Acpi =
+            NanaBox::FromAcpiConfiguration(Value.Acpi);
+        if (!Acpi.empty())
+        {
+            Result["Acpi"] = Acpi;
+        }
+    }
+
     {
         nlohmann::json CpuId =
             NanaBox::FromCpuIdConfiguration(Value.CpuId);
@@ -1599,6 +2230,13 @@ NanaBox::VirtualMachineConfiguration NanaBox::ToVirtualMachineConfiguration(
     // Anti-Detection Edition fields (Phase 1+)
     Result.AntiDetectionProfile = NanaBox::ToAntiDetectionProfile(
         Mile::Json::GetSubKey(Value, "AntiDetectionProfile"));
+
+    // Phase 2+ Extended Anti-Detection fields
+    Result.Smbios = NanaBox::ToSmbiosConfiguration(
+        Mile::Json::GetSubKey(Value, "Smbios"));
+
+    Result.Acpi = NanaBox::ToAcpiConfiguration(
+        Mile::Json::GetSubKey(Value, "Acpi"));
 
     Result.CpuId = NanaBox::ToCpuIdConfiguration(
         Mile::Json::GetSubKey(Value, "CpuId"));
