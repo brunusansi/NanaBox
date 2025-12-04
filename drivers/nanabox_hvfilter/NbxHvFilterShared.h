@@ -1,0 +1,107 @@
+/*
+ * PROJECT:    NanaBox Anti-Detection Edition
+ * FILE:       drivers/nanabox_hvfilter/NbxHvFilterShared.h
+ * PURPOSE:    Shared definitions for nanabox_hvfilter driver (User-mode and Kernel-mode)
+ *
+ * LICENSE:    The MIT License
+ */
+
+#ifndef NBX_HVFILTER_SHARED_H
+#define NBX_HVFILTER_SHARED_H
+
+#ifdef _KERNEL_MODE
+#include <ntddk.h>
+#else
+#include <windows.h>
+#endif
+
+//
+// Version information
+//
+#define NANABOX_HVFILTER_VERSION_MAJOR  1
+#define NANABOX_HVFILTER_VERSION_MINOR  0
+#define NANABOX_HVFILTER_VERSION_BUILD  0
+
+//
+// Device names
+//
+#define NANABOX_HVFILTER_DEVICE_NAME_W     L"\\Device\\NanaBoxHvFilter"
+#define NANABOX_HVFILTER_SYMBOLIC_NAME_W   L"\\DosDevices\\NanaBoxHvFilter"
+#define NANABOX_HVFILTER_USER_DEVICE_NAME  "\\\\.\\NanaBoxHvFilter"
+
+//
+// IOCTL codes
+//
+#define IOCTL_NBX_BASE                      0x8000
+
+#define IOCTL_NBX_HVFILTER_SET_PROFILE \
+    CTL_CODE(FILE_DEVICE_UNKNOWN, IOCTL_NBX_BASE + 0, METHOD_BUFFERED, FILE_ANY_ACCESS)
+
+#define IOCTL_NBX_HVFILTER_GET_STATUS \
+    CTL_CODE(FILE_DEVICE_UNKNOWN, IOCTL_NBX_BASE + 1, METHOD_BUFFERED, FILE_ANY_ACCESS)
+
+#define IOCTL_NBX_HVFILTER_CLEAR_PROFILE \
+    CTL_CODE(FILE_DEVICE_UNKNOWN, IOCTL_NBX_BASE + 2, METHOD_BUFFERED, FILE_ANY_ACCESS)
+
+//
+// Maximum sizes
+//
+#define NBX_MAX_PROFILE_NAME_LENGTH     64
+#define NBX_MAX_STRING_LENGTH           256
+
+//
+// Profile flags
+//
+#define NBX_PROFILE_FLAG_CPUID          0x00000001
+#define NBX_PROFILE_FLAG_MSR_INTERCEPT  0x00000002
+#define NBX_PROFILE_FLAG_TIMING         0x00000004
+#define NBX_PROFILE_FLAG_PCI            0x00000008
+
+//
+// Status codes
+//
+#define NBX_STATUS_SUCCESS              0x00000000
+#define NBX_STATUS_ERROR                0x00000001
+#define NBX_STATUS_INVALID_PARAMETER    0x00000002
+#define NBX_STATUS_BUFFER_TOO_SMALL     0x00000003
+#define NBX_STATUS_NOT_SUPPORTED        0x00000004
+
+#ifndef _KERNEL_MODE
+#pragma pack(push, 1)
+#endif
+
+//
+// SET_PROFILE input structure
+//
+typedef struct _NBX_SET_PROFILE_INPUT {
+#ifdef _KERNEL_MODE
+    CHAR ProfileName[NBX_MAX_PROFILE_NAME_LENGTH];
+    ULONG Flags;
+#else
+    CHAR ProfileName[NBX_MAX_PROFILE_NAME_LENGTH];
+    DWORD Flags;
+#endif
+} NBX_SET_PROFILE_INPUT, *PNBX_SET_PROFILE_INPUT;
+
+//
+// GET_STATUS output structure
+//
+typedef struct _NBX_GET_STATUS_OUTPUT {
+#ifdef _KERNEL_MODE
+    CHAR ActiveProfileName[NBX_MAX_PROFILE_NAME_LENGTH];
+    ULONG ActiveFlags;
+    ULONG DriverVersion;
+    BOOLEAN IsActive;
+#else
+    CHAR ActiveProfileName[NBX_MAX_PROFILE_NAME_LENGTH];
+    DWORD ActiveFlags;
+    DWORD DriverVersion;
+    BOOL IsActive;
+#endif
+} NBX_GET_STATUS_OUTPUT, *PNBX_GET_STATUS_OUTPUT;
+
+#ifndef _KERNEL_MODE
+#pragma pack(pop)
+#endif
+
+#endif // !NBX_HVFILTER_SHARED_H

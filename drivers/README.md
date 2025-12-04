@@ -6,23 +6,48 @@ This directory contains kernel-mode drivers for guest-side anti-detection capabi
 
 The NanaBox anti-detection drivers run **inside the guest VM** to intercept and modify CPUID instructions and MSR (Model-Specific Register) access, hiding virtualization signatures from anti-cheat systems.
 
+## Current Status: Phase 3A (Skeleton) - ✅ COMPLETE
+
+**What's Implemented**:
+- ✅ Driver device creation and symbolic link (`\Device\NanaBoxHvFilter`)
+- ✅ IRP dispatch routines (CREATE, CLOSE, DEVICE_CONTROL)
+- ✅ IOCTL interface (SET_PROFILE, GET_STATUS, CLEAR_PROFILE)
+- ✅ User-mode helper utility (NbxHvFilterClient.exe)
+- ✅ Safe input validation and error handling
+- ✅ Comprehensive logging and diagnostics
+
+**What's NOT Implemented (Phase 3B)**:
+- ❌ CPUID instruction interception
+- ❌ MSR read/write filtering
+- ❌ Timing normalization
+- ❌ PCI topology control
+
+**Safety**: This skeleton driver does NOT modify any CPU behavior or system structures. It only provides the IOCTL interface for configuration management.
+
 ## Drivers
 
 ### nanabox_hvfilter.sys
-**Unified Hypervisor Filter Driver**
+**Unified Hypervisor Filter Driver (Skeleton)**
 
-- **Purpose**: CPUID and MSR interception for anti-detection
-- **Type**: Kernel-mode driver (KMDF)
+- **Purpose**: IOCTL-based configuration interface for anti-detection profiles
+- **Type**: Kernel-mode driver (WDM)
 - **OS Support**: Windows 10 1809+, Windows 11
 - **Architecture**: x64 only
+- **Current Phase**: 3A (Skeleton Only)
 
-**Features**:
-- CPUID instruction interception and spoofing
-- MSR read/write (RDMSR/WRMSR) interception
-- Hyper-V hypervisor bit hiding (CPUID.1.ECX[31])
-- Hyper-V MSR range blocking (0x40000000-0x400000FF)
-- Profile-based configuration (Valorant, EAC, BattlEye, etc.)
-- Per-process filtering (optional)
+**Implemented Features**:
+- ✅ Device creation and IOCTL handling
+- ✅ Profile management (set/get/clear)
+- ✅ Logging with KdPrintEx
+- ✅ Safe error handling
+
+**Planned Features (Phase 3B)**:
+- ⏳ CPUID instruction interception and spoofing
+- ⏳ MSR read/write (RDMSR/WRMSR) interception
+- ⏳ Hyper-V hypervisor bit hiding (CPUID.1.ECX[31])
+- ⏳ Hyper-V MSR range blocking (0x40000000-0x400000FF)
+- ⏳ Profile-based configuration loading
+- ⏳ Per-process filtering (optional)
 
 ## Build Requirements
 

@@ -178,6 +178,7 @@
     <ClInclude Include="ConfigurationManager.h" />
     <ClInclude Include="NanaBox.Configuration.Parser.h" />
     <ClInclude Include="NanaBox.Configuration.Specification.h" />
+    <ClInclude Include="NanaBox.HvFilter.Integration.h" />
     <ClInclude Include="HostCompute.h" />
     <ClInclude Include="MainWindow.h" />
     <ClInclude Include="MainWindowControl.h">

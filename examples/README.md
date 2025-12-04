@@ -48,6 +48,22 @@ Optimized for **Roblox** with Byfron anti-cheat compatibility.
 - **Features**: CPUID/MSR/ACPI spoofing, no TPM requirement
 - **Use Case**: Running Roblox in VM for account separation
 
+### Integration Examples
+
+#### hvfilter-integration-example.cpp
+Example C++ code demonstrating how to integrate the HvFilter driver with NanaBox VM configuration.
+
+**Purpose**: Shows developers how to:
+- Check if the HvFilter driver is available
+- Connect to the driver from user-mode
+- Load anti-detection profiles from VM configuration
+- Query driver status
+- Clear profiles on VM shutdown
+
+**Usage**: This is example code to be integrated into NanaBox source files, not a standalone program.
+
+**See also**: `docs/driver-hvfilter.md` for complete driver documentation
+
 #### profile-pubg.json
 Optimized for **PUBG** with BattlEye anti-cheat compatibility.
 - **Hardware Profile**: MSI MPG Z790 with Intel Core i9-13900K

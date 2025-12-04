@@ -7,4 +7,6 @@
   <Project Path="NanaBoxPackage/NanaBoxPackage.wapproj" Type="c7167f0d-bc9f-4e6e-afe1-012c56b48db5">
     <Deploy />
   </Project>
+  <Project Path="drivers/nanabox_hvfilter/nanabox_hvfilter.vcxproj" Id="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" />
+  <Project Path="tools/NbxHvFilterClient/NbxHvFilterClient.vcxproj" Id="f8d9a8e5-9f4d-4c7a-b2e1-3d8f5c6a7b9e" />
 </Solution>
