@@ -40,7 +40,7 @@ DriverEntry(
     //
     RtlZeroMemory(&g_DriverContext, sizeof(g_DriverContext));
     g_DriverContext.IsActive = FALSE;
-    RtlCopyMemory(g_DriverContext.ActiveProfileName, "None", 5);
+    RtlCopyMemory(g_DriverContext.ActiveProfileName, "None", sizeof("None"));
 
     //
     // Set up driver dispatch routines

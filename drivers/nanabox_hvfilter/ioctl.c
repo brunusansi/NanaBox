@@ -50,13 +50,18 @@ NbxHandleSetProfile(
 
     //
     // Store profile information in global context
+    // Zero the buffer first, then copy the null-terminated profile name
+    // This ensures any remaining space is zeroed
     //
     RtlZeroMemory(g_DriverContext.ActiveProfileName, sizeof(g_DriverContext.ActiveProfileName));
     RtlCopyMemory(
         g_DriverContext.ActiveProfileName,
         profileInput->ProfileName,
-        min(NBX_MAX_PROFILE_NAME_LENGTH, strlen(profileInput->ProfileName))
+        NBX_MAX_PROFILE_NAME_LENGTH - 1  // Leave room for null terminator
     );
+    // Ensure null termination (redundant but explicit)
+    g_DriverContext.ActiveProfileName[NBX_MAX_PROFILE_NAME_LENGTH - 1] = '\0';
+    
     g_DriverContext.ActiveFlags = profileInput->Flags;
     g_DriverContext.IsActive = TRUE;
 
@@ -146,7 +151,7 @@ NbxHandleClearProfile(
     // Clear profile information
     //
     RtlZeroMemory(g_DriverContext.ActiveProfileName, sizeof(g_DriverContext.ActiveProfileName));
-    RtlCopyMemory(g_DriverContext.ActiveProfileName, "None", 5);
+    RtlCopyMemory(g_DriverContext.ActiveProfileName, "None", sizeof("None"));
     g_DriverContext.ActiveFlags = 0;
     g_DriverContext.IsActive = FALSE;
 
