@@ -111,6 +111,7 @@ $VerbosePreference = if ($PSBoundParameters['Verbose']) { "Continue" } else { "S
 $ScriptVersion = "1.0.0"
 $DriverName = "nanabox_hvfilter"
 $ServiceName = "NanaBoxHvFilter"
+$ServiceDisplayName = "NanaBox Hypervisor Filter Driver"
 
 # Color scheme for console output
 $ColorScheme = @{
@@ -484,7 +485,7 @@ function Install-Driver {
         } else {
             Write-Info "Creating driver service..."
             $servicePath = "`"$destPath`""
-            $scResult = & sc.exe create $ServiceName type= kernel start= demand error= normal binPath= $servicePath DisplayName= "NanaBox Hypervisor Filter Driver" 2>&1
+            $scResult = & sc.exe create $ServiceName type= kernel start= demand error= normal binPath= $servicePath DisplayName= $ServiceDisplayName 2>&1
             
             if ($LASTEXITCODE -eq 0) {
                 Write-Success "Driver service created successfully"
@@ -659,7 +660,9 @@ function Write-FinalSummary {
     Write-Header "Phase 3B Setup Summary"
     
     Write-Host "Build:    " -NoNewline
-    if ($BuildSuccess) {
+    if ($SkipBuild) {
+        Write-Host "SKIPPED" -ForegroundColor $ColorScheme.Warning
+    } elseif ($BuildSuccess) {
         Write-Host "OK" -ForegroundColor $ColorScheme.Success
     } else {
         Write-Host "FAILED" -ForegroundColor $ColorScheme.Error
@@ -694,7 +697,14 @@ function Write-FinalSummary {
     
     Write-Host ""
     
-    if ($BuildSuccess -and $InstallSuccess -and $StartSuccess -and $TestSuccess) {
+    # Determine overall success: all non-skipped steps must succeed
+    $allSucceeded = $true
+    if (-not $SkipBuild -and -not $BuildSuccess) { $allSucceeded = $false }
+    if (-not $SkipInstall -and -not $InstallSuccess) { $allSucceeded = $false }
+    if (-not $SkipStart -and -not $StartSuccess) { $allSucceeded = $false }
+    if (-not $SkipTest -and -not $TestSuccess) { $allSucceeded = $false }
+    
+    if ($allSucceeded) {
         Write-Success "All Phase 3B setup steps completed successfully!"
         Write-Host ""
         Write-Info "Next steps:"
@@ -864,12 +874,14 @@ function Start-Phase3BSetup {
     # Final Summary
     Write-FinalSummary -BuildSuccess $buildSuccess -InstallSuccess $installSuccess -StartSuccess $startSuccess -TestSuccess $testSuccess
     
-    # Return appropriate exit code
-    if ($buildSuccess -and $installSuccess -and $startSuccess) {
-        exit 0
-    } else {
-        exit 1
-    }
+    # Return appropriate exit code: all non-skipped steps must succeed
+    $exitCode = 0
+    if (-not $SkipBuild -and -not $buildSuccess) { $exitCode = 1 }
+    if (-not $SkipInstall -and -not $installSuccess) { $exitCode = 1 }
+    if (-not $SkipStart -and -not $startSuccess) { $exitCode = 1 }
+    if (-not $SkipTest -and -not $testSuccess) { $exitCode = 1 }
+    
+    exit $exitCode
 }
 
 # ============================================================================

@@ -522,21 +522,56 @@ Once Phase 3B testing is complete and the configuration framework is validated:
 
 Use this checklist to verify Phase 3B functionality:
 
+### Prerequisites
+- [ ] Test-signing enabled and system rebooted
+- [ ] Secure Boot disabled in BIOS/UEFI
+- [ ] Visual Studio 2022 with C++ workload installed
+- [ ] Windows Driver Kit (WDK) 10.0.22621.0+ installed
+
+### Build Phase
 - [ ] Setup script runs without errors
-- [ ] Driver builds successfully (both Debug and Release)
+- [ ] Driver builds successfully in Release configuration
+- [ ] Driver builds successfully in Debug configuration
 - [ ] Client builds successfully
-- [ ] Driver installs/updates correctly
+- [ ] Build output files exist (nanabox_hvfilter.sys, NbxHvFilterClient.exe)
+
+### Installation Phase
+- [ ] Driver installs correctly (first-time installation)
+- [ ] Driver updates correctly (subsequent installations)
+- [ ] Driver service created successfully
+- [ ] Driver file copied to System32\drivers
+- [ ] No installation errors in Event Viewer
+
+### Runtime Phase
 - [ ] Driver service starts successfully
-- [ ] Driver appears in Device Manager
-- [ ] Client can communicate with driver (status command works)
-- [ ] SET_PROFILE IOCTL works with various flag combinations
-- [ ] GET_STATUS IOCTL returns correct profile data
-- [ ] CLEAR_PROFILE IOCTL resets the driver state
+- [ ] Driver appears in Device Manager (System devices)
 - [ ] Driver logs appear in DebugView
-- [ ] No errors in Event Viewer
-- [ ] Driver can be stopped cleanly
+- [ ] Client can open device handle (status command works)
+
+### IOCTL Testing Phase
+- [ ] SET_PROFILE IOCTL works with CPUID flag (0x00000001)
+- [ ] SET_PROFILE IOCTL works with MSR flag (0x00000002)
+- [ ] SET_PROFILE IOCTL works with Timing flag (0x00000004)
+- [ ] SET_PROFILE IOCTL works with PCI flag (0x00000008)
+- [ ] SET_PROFILE IOCTL works with combined flags (0x0000000F)
+- [ ] GET_STATUS IOCTL returns correct profile name
+- [ ] GET_STATUS IOCTL returns correct active flags
+- [ ] GET_STATUS IOCTL returns correct driver version
+- [ ] CLEAR_PROFILE IOCTL resets the driver state
+- [ ] CLEAR_PROFILE IOCTL clears profile name and flags
+
+### Stability Phase
+- [ ] No errors or warnings in Event Viewer
+- [ ] Driver can be stopped cleanly with sc stop
 - [ ] Driver can be restarted without issues
-- [ ] Driver uninstalls cleanly
+- [ ] Multiple IOCTL calls work reliably
+- [ ] No memory leaks or resource issues
+
+### Cleanup Phase
+- [ ] Driver service stops successfully
+- [ ] Driver service deletes successfully
+- [ ] Driver file can be removed
+- [ ] System remains stable after uninstallation
 
 ## Additional Resources
 
