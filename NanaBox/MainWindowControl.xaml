@@ -77,6 +77,14 @@
         Icon="Sync"
         LabelPosition="Collapsed"
         ToolTipService.ToolTip="[Reload Virtual Machine Settings]" />
+      <AppBarButton
+        x:Uid="/MainWindow/AntiDetectionSettingsButton"
+        Width="48"
+        AutomationProperties.Name="[Anti-Detection Settings]"
+        Click="AntiDetectionSettingsButtonClick"
+        Icon="Permissions"
+        LabelPosition="Collapsed"
+        ToolTipService.ToolTip="[Anti-Detection Settings]" />
       <AppBarSeparator />
       <!--<AppBarToggleButton
         x:Uid="/MainWindow/RedirectKeyboardNavigationButton"

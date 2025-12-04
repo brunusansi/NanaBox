@@ -379,6 +379,8 @@ namespace winrt::NanaBox::implementation
                 Configuration.Name = Mile::ToString(CP_UTF8, ConfigurationName);
                 Configuration.ProcessorCount = 2;
                 Configuration.MemorySize = 2048;
+                // Set default gaming profile for new VMs
+                Configuration.AntiDetectionProfile = NanaBox::AntiDetectionProfile::DefaultGaming;
                 {
                     NanaBox::NetworkAdapterConfiguration NetworkAdapter;
                     NetworkAdapter.Connected = true;

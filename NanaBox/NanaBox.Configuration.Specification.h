@@ -61,12 +61,20 @@ namespace NanaBox
     /// Anti-detection profile presets
     /// Phase 1: Configuration schema only
     /// Phase 2+: Actual implementation
+    /// Gaming-specific profiles added for UI/CLI integration
     /// </summary>
     enum class AntiDetectionProfile : std::int32_t
     {
-        Vanilla = 0,    // No anti-detection (default)
-        Balanced = 1,   // Moderate anti-detection with good performance
-        BareMetal = 2,  // Maximum anti-detection effort
+        Vanilla = 0,         // No anti-detection (default)
+        Balanced = 1,        // Moderate anti-detection with good performance
+        BareMetal = 2,       // Maximum anti-detection effort
+        DefaultGaming = 3,   // Default gaming profile with basic anti-detection
+        Valorant = 4,        // Riot Vanguard optimized profile
+        EacGeneric = 5,      // Easy Anti-Cheat generic profile
+        BattlEye = 6,        // BattlEye anti-cheat profile
+        Faceit = 7,          // FaceIT anti-cheat profile
+        ExpertTencent = 8,   // Tencent ACE anti-cheat profile
+        EaJavelin = 9,       // EA Javelin anti-cheat profile
     };
 
     struct ComPortsConfiguration

@@ -23,6 +23,7 @@
 #include "AboutPage.h"
 #include "NewVirtualHardDiskPage.h"
 #include "ResizeVirtualHardDiskPage.h"
+#include "AntiDetectionSettingsPage.h"
 
 namespace winrt
 {
@@ -811,6 +812,35 @@ winrt::handle ShowResizeVirtualHardDiskDialog(
             WindowHandle,
             480,
             320,
+            winrt::get_abi(Window),
+            ParentWindowHandle);
+
+        winrt::check_hresult(::MileXamlThreadUninitialize());
+    }));
+}
+
+winrt::handle ShowAntiDetectionSettingsDialog(
+    _In_ HWND ParentWindowHandle,
+    _In_ std::wstring const* ConfigurationFilePath)
+{
+    return winrt::handle(Mile::CreateThread([=]()
+    {
+        winrt::check_hresult(::MileXamlThreadInitialize());
+
+        HWND WindowHandle = ::CreateXamlDialog(ParentWindowHandle);
+        if (!WindowHandle)
+        {
+            return;
+        }
+
+        winrt::NanaBox::AntiDetectionSettingsPage Window =
+            winrt::make<winrt::NanaBox::implementation::AntiDetectionSettingsPage>(
+                WindowHandle,
+                ConfigurationFilePath);
+        ::ShowXamlDialog(
+            WindowHandle,
+            600,
+            700,
             winrt::get_abi(Window),
             ParentWindowHandle);
 
