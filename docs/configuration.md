@@ -83,7 +83,7 @@ Configuration metadata for tracking and multi-account isolation.
 - **Description**: Human-readable description of the VM
 - **Notes**: Additional notes, instructions, or documentation
 - **AccountId**: Unique identifier for account/profile isolation
-- **ProfileId**: Profile type identifier (e.g., valorant, eac-generic, battlEye, etc.)
+- **ProfileId**: Profile type identifier (e.g., valorant, eac-generic, battleye, etc.)
 - **CreationTimestamp**: ISO 8601 timestamp of VM creation
 - **LastUpdatedTimestamp**: ISO 8601 timestamp of last configuration update
 - **SchemaVersion**: Configuration schema version number
