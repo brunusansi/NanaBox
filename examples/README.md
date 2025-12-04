@@ -2,9 +2,11 @@
 
 This directory contains example configuration files demonstrating different use cases and anti-detection profiles.
 
-## Files
+## Files Overview
 
-### basic-vm.json
+### General Examples
+
+#### basic-vm.json
 A minimal virtual machine configuration with no anti-detection features enabled. Suitable for:
 - Development and testing
 - Non-sensitive workloads
@@ -13,7 +15,7 @@ A minimal virtual machine configuration with no anti-detection features enabled.
 
 **Profile**: vanilla
 
-### bare-metal-profile.json
+#### bare-metal-profile.json
 Advanced configuration with full anti-detection features enabled. Suitable for:
 - Gaming with anti-cheat systems
 - Security research
@@ -29,6 +31,44 @@ Features enabled:
 - MSR interception
 - ACPI device hiding
 - TPM 2.0 enabled
+
+### Gaming Profiles
+
+#### profile-valorant.json
+Optimized for **Valorant** with Riot Vanguard anti-cheat compatibility.
+- **Hardware Profile**: ASUS ROG STRIX Z690 with Intel Core i7-12700K
+- **Anti-Detection**: bare-metal profile with strict timing
+- **Features**: Full CPUID/MSR/ACPI spoofing, TPM 2.0 enabled
+- **Use Case**: Running Valorant in VM for testing or isolated gaming
+
+#### profile-roblox.json
+Optimized for **Roblox** with Byfron anti-cheat compatibility.
+- **Hardware Profile**: Gigabyte B550 AORUS with AMD Ryzen 5 5600X
+- **Anti-Detection**: balanced profile with relaxed timing
+- **Features**: CPUID/MSR/ACPI spoofing, no TPM requirement
+- **Use Case**: Running Roblox in VM for account separation
+
+#### profile-pubg.json
+Optimized for **PUBG** with BattlEye anti-cheat compatibility.
+- **Hardware Profile**: MSI MPG Z790 with Intel Core i9-13900K
+- **Anti-Detection**: bare-metal profile with strict timing
+- **Features**: Full CPUID/MSR/ACPI spoofing, TPM 2.0 enabled
+- **Use Case**: Running PUBG in VM for competitive gaming
+
+#### profile-ea-ac.json
+Optimized for **EA Games** with EA Anti-Cheat compatibility.
+- **Hardware Profile**: ASRock Z690 Steel Legend with Intel Core i7-13700K
+- **Anti-Detection**: bare-metal profile with strict timing
+- **Features**: Full CPUID/MSR/ACPI spoofing, TPM 2.0 enabled
+- **Use Case**: Running EA games (Apex Legends, etc.) in VM
+
+### Additional Gaming Profiles (Coming Soon)
+
+Additional gaming profiles are planned for Phase 5:
+- **FaceIT Anti-Cheat**: For CS:GO and other FaceIT platform games
+- **Expert Tencent**: For Tencent games (PUBG Mobile, etc.)
+- **EasyAntiCheat (EAC)**: Generic EAC profile for various games
+- **BattlEye**: Generic BattlEye profile for various games
 
 ## Configuration Fields
 

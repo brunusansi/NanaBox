@@ -1,0 +1,84 @@
+{
+    "NanaBox": {
+        "Type": "VirtualMachine",
+        "Version": 1,
+        "GuestType": "Windows",
+        "Name": "PUBG-Gaming",
+        "ProcessorCount": 8,
+        "MemorySize": 16384,
+        "ComPorts": {
+            "UefiConsole": "Disabled"
+        },
+        "Gpu": {
+            "AssignmentMode": "Default",
+            "EnableHostDriverStore": false
+        },
+        "NetworkAdapters": [
+            {
+                "Connected": true,
+                "MacAddress": "00-D8-61-AB-CD-EF",
+                "EndpointId": ""
+            }
+        ],
+        "ScsiDevices": [
+            {
+                "Type": "VirtualDisk",
+                "Path": "PUBG.vhdx"
+            },
+            {
+                "Type": "VirtualImage",
+                "Path": ""
+            }
+        ],
+        "SecureBoot": true,
+        "Tpm": true,
+        "GuestStateFile": "PUBG.vmgs",
+        "RuntimeStateFile": "PUBG.vmrs",
+        "ExposeVirtualizationExtensions": false,
+        "Metadata": {
+            "Description": "PUBG gaming VM with BattlEye anti-cheat compatibility",
+            "Notes": "Optimized for PUBG BattlEye. Uses Intel Core i9-13900K profile.",
+            "AccountId": "pubg-account-1",
+            "ProfileId": "pubg",
+            "SchemaVersion": 1
+        },
+        "AntiDetectionProfile": "bare-metal",
+        "ChipsetInformation": {
+            "Manufacturer": "MSI",
+            "ProductName": "MPG Z790 EDGE WIFI (MS-7D91)",
+            "Version": "1.0",
+            "SerialNumber": "K8123456789012",
+            "UUID": "00020003-0004-0005-0006-000700080009",
+            "SKUNumber": "To be filled by O.E.M.",
+            "Family": "To be filled by O.E.M.",
+            "BaseBoardSerialNumber": "K812345678901234",
+            "ChassisSerialNumber": "To be filled by O.E.M.",
+            "ChassisAssetTag": "To be filled by O.E.M."
+        },
+        "CpuId": {
+            "Enabled": true,
+            "HideHypervisor": true,
+            "VendorString": "GenuineIntel",
+            "MaskVirtualizationFeatures": true
+        },
+        "MsrIntercept": {
+            "Enabled": true,
+            "BlockHyperVMsrs": true,
+            "NormalizeTSC": true
+        },
+        "AcpiOverride": {
+            "Enabled": true,
+            "RemoveHyperVDevices": true,
+            "CustomDSDT": ""
+        },
+        "Timing": {
+            "Strategy": "strict",
+            "NormalizeTSC": true,
+            "NormalizeAPIC": true,
+            "NormalizeHPET": true
+        },
+        "Pci": {
+            "Enabled": false
+        }
+    }
+}
