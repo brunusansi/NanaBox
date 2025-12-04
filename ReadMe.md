@@ -14,6 +14,11 @@
 
 ![Screenshot](Documents/Screenshot.png)
 
+> **⚠️ NanaBox Anti-Detection Edition**  
+> This repository is an experimental **Anti-Detection Edition** fork of [M2Team/NanaBox](https://github.com/M2Team/NanaBox), adding advanced configuration, profiles, and tooling for gaming and anti-cheat oriented scenarios (EAC, BattlEye, Vanguard, FACEIT, Tencent ACE, EA Javelin, etc.).  
+>   
+> **Upstream ownership and credits remain with M2Team and the original author (Kenji Mouri)**. This fork adds experimental anti-detection features on top of the upstream foundation. For the original NanaBox project, please visit [M2Team/NanaBox](https://github.com/M2Team/NanaBox).
+
 NanaBox is a third-party lightweight XAML-based out-of-box-experience oriented
 Hyper-V virtualization software based on Host Compute System API, Remote Desktop
 ActiveX control, and XAML Islands.
@@ -46,7 +51,54 @@ contributor, because NanaBox is always a community-friendly open-source project.
 If you'd like me to add features or improvements ahead of time, please use
 [paid services](https://github.com/MouriNaruto/MouriNaruto/blob/main/PaidServices.md).
 
+## NanaBox Anti-Detection Edition
+
+This **Anti-Detection Edition** extends the upstream NanaBox with features designed for bare-metal-like virtualization that can evade common anti-cheat detection methods. The primary goals are:
+
+- **Gaming & Anti-Cheat Compatibility**: Create virtual machines that appear as close to physical hardware as possible for testing and running games protected by modern anti-cheat systems (EAC, BattlEye, Vanguard, FACEIT, Tencent ACE, EA Javelin, Byfron, mhyprot3, etc.).
+- **Per-Game/Per-AC Profiles**: Provide pre-configured profiles optimized for specific games and anti-cheat engines, allowing quick deployment without manual configuration.
+- **Multi-Account Isolation**: Enable safe multi-account scenarios with hardware identity isolation to prevent cross-contamination between VM instances.
+- **Security Research**: Support virtualization experiments requiring detection evasion for legitimate security research and analysis.
+
+**Important**: This project focuses **exclusively on gaming and anti-cheat oriented use cases**. Cloud provider profiles (AWS/Azure/GCP) are intentionally out of scope.
+
+### Anti-Detection Features
+
+The Anti-Detection Edition adds the following capabilities:
+
+- **JSON-based Anti-Detection Configuration**: Extended configuration schema supporting SMBIOS spoofing, CPU ID masking, MSR interception, ACPI overrides, timing adjustments, and PCI device control.
+- **Profile System**: Pre-configured profiles for popular games and anti-cheat systems:
+  - `valorant` - Riot Vanguard optimized
+  - `eac-generic` - Easy Anti-Cheat support
+  - `battleye` - BattlEye anti-cheat
+  - `faceit` - FaceIT anti-cheat (CS:GO, CS2)
+  - `expert-tencent` - Tencent ACE
+  - `ea-javelin` - EA Javelin protection
+  - `default-gaming` - Basic gaming anti-detection
+  - `balanced` - Moderate anti-detection with good performance
+  - `bare-metal` - Maximum anti-detection effort
+- **UI & CLI Integration**: Select and manage anti-detection profiles through the NanaBox UI or command-line tools.
+- **Hardware Identity Spoofing**: Configurable SMBIOS, CPU features, MAC addresses, disk identifiers, GPU device IDs to mimic real hardware.
+- **Multi-Account Isolation**: Profile cloning and per-VM identity management for safe multi-account scenarios.
+
+### Anti-Detection Documentation
+
+For detailed information about the anti-detection features, please refer to:
+
+- **[Anti-Detection Roadmap](docs/roadmap.md)** - Development phases and feature timeline
+- **[Anti-Detection Overview](docs/anti-detection-overview.md)** - Detection vectors and mitigation strategies
+- **[Configuration Reference](docs/configuration.md)** - Extended JSON schema and configuration options
+- **[Profile System Guide](docs/profiles.md)** - Available profiles and how to use them
+- **[Development Notes](docs/development-notes.md)** - Technical implementation details
+- **[Multi-Account Isolation](docs/multi-account-isolation.md)** - Multi-account setup and best practices
+
+### Experimental Features Warning
+
+⚠️ **The anti-detection features in this edition are experimental and under active development.** These features involve low-level system manipulation (drivers, EFI, hardware spoofing) and should only be used on test machines in controlled environments. Use at your own risk.
+
 ## Features
+
+### Core Features (from upstream NanaBox)
 
 - Based on Host Compute System API as virtualization backend.
 - Supports Hyper-V Enhanced Session Mode for Windows Guests.
@@ -71,6 +123,21 @@ If you'd like me to add features or improvements ahead of time, please use
   cursor confinement.)
 - Supports Plan 9 protocol over Hyper-V Socket for both read-only and read/write
   file sharing between host and guest.
+
+### Anti-Detection Edition Features
+
+- **Extended JSON Configuration Schema**: Anti-detection configuration sections including:
+  - `AntiDetectionProfile` - High-level profile selection
+  - `Smbios` - System Management BIOS customization
+  - `CpuId` - CPU identification and feature masking
+  - `MsrIntercept` - Model-Specific Register interception
+  - `AcpiOverride` - ACPI table overrides
+  - `Timing` - Timing-related adjustments
+  - `Pci` - PCI device configuration
+- **Gaming/Anti-Cheat Focused Profiles**: Pre-configured profiles optimized for specific anti-cheat systems (Vanguard, EAC, BattlEye, FACEIT, Tencent ACE, EA Javelin, etc.)
+- **UI Integration**: Anti-Detection Settings dialog for profile selection and management
+- **CLI Support**: Command-line tools for automation and scripting
+- **Profile Cloning**: Helpers for multi-account isolation and per-game profile management
 
 ## System Requirements
 
@@ -106,6 +173,12 @@ for more information.
   can click the sponsor button to refresh the status after you
   have purchased or redeemed the Sponsor Edition addon.
 
+### Anti-Detection Edition Specific Issues
+
+- **Experimental Features**: Anti-detection capabilities (drivers, EFI helpers, advanced spoofing) are experimental and under active development. They may not work perfectly with all anti-cheat systems.
+- **Test Environment Only**: Anti-detection features involve low-level system manipulation and should only be used on dedicated test machines in controlled environments.
+- **Profile Effectiveness**: The effectiveness of anti-detection profiles varies by anti-cheat system and may require updates as anti-cheat technologies evolve.
+
 Reference documents for known issues:
 
 - [MD4: Notes for using Host Compute System API](https://github.com/MouriNaruto/MouriDocs/tree/main/docs/4)
@@ -123,6 +196,8 @@ Machine Platform feature only.
 
 ## Development Roadmap
 
+### Upstream NanaBox Roadmap
+
 - Future Series (T.B.D.)
   - [ ] Add friendly virtual machine creation UI and settings UI.
   - [ ] Provide tool for Hyper-V vmcx migration. (Suggested by Belleve.)
@@ -131,7 +206,22 @@ Machine Platform feature only.
   - [ ] Add support for connecting virtual machine with MsRdpEx from 
         Devolutions. (Suggested by awakecoding.)
 
+### Anti-Detection Edition Roadmap
+
+For the Anti-Detection Edition specific roadmap and development phases, please see **[docs/roadmap.md](docs/roadmap.md)**.
+
+The Anti-Detection Edition roadmap includes:
+- Phase 1: VM Creation UI & Settings UI (In Progress)
+- Phase 2: SMBIOS & Basic Anti-Detection
+- Phase 3: CPUID & MSR Spoofing
+- Phase 4: ACPI & Advanced Spoofing
+- Phase 5: Profiles & Automation
+
+**Note**: The Anti-Detection Edition roadmap is maintained separately and may diverge from the upstream roadmap as we focus on gaming and anti-cheat specific features.
+
 ## Documents
+
+### Upstream NanaBox Documentation
 
 - [License](License.md)
 - [Relevant People](Documents/People.md)
@@ -143,3 +233,18 @@ Machine Platform feature only.
 - [NanaBox Configuration File Reference](Documents/ConfigurationReference.md)
 - [NanaBox Sponsor Edition](Documents/SponsorEdition.md)
 - [My Digital Life Forums](https://forums.mydigitallife.net/threads/88560)
+
+### Anti-Detection Edition Documentation
+
+- [Anti-Detection Roadmap](docs/roadmap.md)
+- [Anti-Detection Overview](docs/anti-detection-overview.md)
+- [Configuration Reference](docs/configuration.md)
+- [Profile System Guide](docs/profiles.md)
+- [Development Notes](docs/development-notes.md)
+- [Multi-Account Isolation](docs/multi-account-isolation.md)
+
+## Credits and Contributions
+
+**NanaBox Anti-Detection Edition** is maintained by [brunusansi](https://github.com/brunusansi). All upstream NanaBox credits, ownership, and Sponsor Edition benefits remain with the original author **Kenji Mouri** and the **M2Team** organization.
+
+Contributions to the Anti-Detection Edition features should be directed to this repository ([brunusansi/NanaBox](https://github.com/brunusansi/NanaBox)). For contributions to the core NanaBox functionality, please consider contributing to the upstream repository ([M2Team/NanaBox](https://github.com/M2Team/NanaBox)).
