@@ -238,6 +238,7 @@ function Set-AntiDetectionConfig { }
 - ✅ NbxHvFilterClient.exe - User-mode helper utility
 - ✅ IOCTL interface for profile management
 - ✅ Installation and signing documentation
+- ✅ Automated setup scripts for Phase 3B testing
 - ⏳ CPUID interception implementation (Phase 3B)
 - ⏳ MSR filtering implementation (Phase 3B)
 
@@ -247,8 +248,16 @@ function Set-AntiDetectionConfig { }
 3. ✅ Implement IOCTL interface
 4. ✅ Create user-mode helper
 5. ✅ Document build and installation process
+6. ✅ Create automated setup/testing scripts
 
-**Phase 3B (Pending)**:
+**Phase 3B Setup Automation (Complete)**:
+1. ✅ Setup-NbxHvFilterPhase3B.ps1 - Automated build/install/test script
+2. ✅ Integration with Setup-NanaBoxDevEnv.ps1 via -Phase3B parameter
+3. ✅ PHASE3B_TESTING.md - Comprehensive testing guide
+4. ✅ Updated documentation in driver-hvfilter.md
+5. ✅ Quick Start guide in scripts/setup/README.md
+
+**Phase 3B Interception (Pending)**:
 1. ⏳ Implement CPUID instruction hooking
 2. ⏳ Implement MSR read/write interception
 3. ⏳ Add profile-based configuration loading
@@ -259,10 +268,12 @@ function Set-AntiDetectionConfig { }
 - ✅ Verify driver loads and unloads cleanly
 - ✅ Test IOCTL communication with user-mode
 - ✅ Validate input buffer handling
-- ⏳ Test CPUID spoofing with CPU-Z (Phase 3B)
-- ⏳ Test MSR blocking with RWEverything (Phase 3B)
-- ⏳ Test with Pafish, Al-Khaser (Phase 3B)
-- ⏳ Verify stability under load (Phase 3B)
+- ✅ Automated setup/test with Setup-NbxHvFilterPhase3B.ps1
+- ✅ See PHASE3B_TESTING.md for complete test scenarios
+- ⏳ Test CPUID spoofing with CPU-Z (Phase 3B interception)
+- ⏳ Test MSR blocking with RWEverything (Phase 3B interception)
+- ⏳ Test with Pafish, Al-Khaser (Phase 3B interception)
+- ⏳ Verify stability under load (Phase 3B interception)
 
 **Security Considerations**:
 - ⚠️ Kernel drivers require extreme care
@@ -461,10 +472,12 @@ Detailed explanation of changes.
 - Test on different Windows versions
 
 ### Driver Issues
+- Use automated setup script: `scripts\setup\Setup-NbxHvFilterPhase3B.ps1`
 - Use WinDbg for kernel debugging
 - Enable Driver Verifier for testing
 - Check Event Viewer for errors
 - Use test VMs, never production systems
+- See PHASE3B_TESTING.md for troubleshooting guide
 
 ### Anti-Detection Failures
 - Test with detection tools first

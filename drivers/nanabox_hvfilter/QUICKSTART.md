@@ -2,14 +2,39 @@
 
 Fast-track guide for developers who want to get the driver running quickly.
 
-## 🚀 Prerequisites
+## 🚀 Automated Setup (Recommended)
+
+**NEW: One-command setup for Phase 3B testing:**
+
+```powershell
+# Run as Administrator
+cd scripts\setup
+.\Setup-NbxHvFilterPhase3B.ps1
+```
+
+This automatically:
+- ✅ Validates environment
+- ✅ Builds driver and client
+- ✅ Installs/updates driver
+- ✅ Starts driver service
+- ✅ Runs sanity checks
+
+**See [PHASE3B_TESTING.md](PHASE3B_TESTING.md) for detailed instructions and testing scenarios.**
+
+---
+
+## Manual Setup (Alternative)
+
+If you prefer manual control or need to troubleshoot:
+
+### 🚀 Prerequisites
 
 - Windows 10/11 x64
 - Visual Studio 2022
 - Windows Driver Kit (WDK) 10.0.22621.0+
 - Administrator privileges
 
-## ⚡ Quick Build
+### ⚡ Quick Build
 
 ```cmd
 # Open Developer Command Prompt
@@ -19,9 +44,9 @@ msbuild nanabox_hvfilter.vcxproj /p:Configuration=Release /p:Platform=x64
 
 Output: `x64\Release\drivers\nanabox_hvfilter.sys`
 
-## ⚙️ Quick Install
+### ⚙️ Quick Install
 
-### 1. Enable Test-Signing (One-Time Setup)
+#### 1. Enable Test-Signing (One-Time Setup)
 
 ```cmd
 # Run as Administrator
