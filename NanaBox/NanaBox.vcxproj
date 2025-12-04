@@ -51,6 +51,10 @@
       <DependentUpon>AboutPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="AntiDetectionSettingsPage.cpp">
+      <DependentUpon>AntiDetectionSettingsPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="ConfigurationManager.cpp" />
     <ClCompile Include="HostCompute.cpp" />
     <ClCompile Include="MainWindow.cpp" />
@@ -113,6 +117,10 @@
       <DependentUpon>AboutPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
+    <Midl Include="AntiDetectionSettingsPage.idl">
+      <DependentUpon>AntiDetectionSettingsPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
     <Midl Include="App.idl">
       <DependentUpon>App.xaml</DependentUpon>
     </Midl>
@@ -161,6 +169,10 @@
   <ItemGroup>
     <ClInclude Include="AboutPage.h">
       <DependentUpon>AboutPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="AntiDetectionSettingsPage.h">
+      <DependentUpon>AntiDetectionSettingsPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="ConfigurationManager.h" />
@@ -216,6 +228,9 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="AboutPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="AntiDetectionSettingsPage.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Include="MainWindowControl.xaml">
