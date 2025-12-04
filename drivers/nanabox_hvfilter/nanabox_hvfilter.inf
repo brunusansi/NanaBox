@@ -1,0 +1,68 @@
+;
+; NanaBox HvFilter Driver Installation Script
+; Copyright (c) NanaBox Anti-Detection Edition Contributors
+;
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=System
+ClassGuid={4d36e97d-e325-11ce-bfc1-08002be10318}
+Provider=%ManufacturerName%
+CatalogFile=nanabox_hvfilter.cat
+DriverVer=12/04/2025,1.0.0.0
+PnpLockdown=1
+
+[DestinationDirs]
+DefaultDestDir = 12
+NanaBoxHvFilter_Device_CoInstaller_CopyFiles = 11
+
+[SourceDisksNames]
+1 = %DiskName%,,,""
+
+[SourceDisksFiles]
+nanabox_hvfilter.sys = 1,,
+
+; ================= Class section =====================
+
+[ClassInstall32]
+Addreg=SystemClassReg
+
+[SystemClassReg]
+HKR,,,0,%ClassName%
+HKR,,Icon,,-5
+
+; ================= Install section ===================
+
+[Manufacturer]
+%ManufacturerName%=Standard,NTamd64
+
+[Standard.NTamd64]
+%NanaBoxHvFilter.DeviceDesc%=NanaBoxHvFilter_Device, Root\NanaBoxHvFilter
+
+[NanaBoxHvFilter_Device.NT]
+CopyFiles=Drivers_Dir
+
+[Drivers_Dir]
+nanabox_hvfilter.sys
+
+; ================= Service installation ==============
+
+[NanaBoxHvFilter_Device.NT.Services]
+AddService = NanaBoxHvFilter,%SPSVCINST_ASSOCSERVICE%, NanaBoxHvFilter_Service_Inst
+
+[NanaBoxHvFilter_Service_Inst]
+DisplayName    = %NanaBoxHvFilter.SVCDESC%
+ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
+StartType      = 3               ; SERVICE_DEMAND_START
+ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %12%\nanabox_hvfilter.sys
+
+; ================= Strings ===========================
+
+[Strings]
+SPSVCINST_ASSOCSERVICE= 0x00000002
+ManufacturerName="NanaBox Anti-Detection Edition"
+ClassName="System"
+DiskName="NanaBox HvFilter Installation Disk"
+NanaBoxHvFilter.DeviceDesc="NanaBox HvFilter Driver"
+NanaBoxHvFilter.SVCDESC="NanaBox Hypervisor Filter Driver"

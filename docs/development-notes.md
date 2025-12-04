@@ -80,24 +80,38 @@ NanaBox/
 - Support both interactive and automated workflows
 - Document OS version requirements
 
-### Layer 3: Guest Tools (Phase 3-4) ⚠️
-**Status**: Schema ready, implementation pending  
+### Layer 3: Guest Tools (Phase 3-4) 🚧
+**Status**: Driver skeleton implemented, interception pending  
 **Language**: C (kernel drivers), PowerShell (user-mode)  
 **Components**:
-- cpuid.sys (CPUID interception driver)
-- msr.sys (MSR interception driver)
-- acpi.sys (ACPI override driver)
-- Guest-side registry tweaks
+- nanabox_hvfilter.sys (Unified hypervisor filter driver - SKELETON ONLY)
+- NbxHvFilterClient.exe (User-mode helper utility)
+- Guest-side registry tweaks (future)
+
+**Implemented (Phase 3A)**:
+- ✅ Driver device creation and symbolic link
+- ✅ IRP dispatch handlers (CREATE, CLOSE, DEVICE_CONTROL)
+- ✅ IOCTL interface (SET_PROFILE, GET_STATUS, CLEAR_PROFILE)
+- ✅ User-mode helper utility with CLI interface
+- ✅ Logging and diagnostics
+- ✅ Safe error handling
+
+**Pending Implementation (Phase 3B)**:
+- ⏳ CPUID instruction interception
+- ⏳ MSR read/write filtering
+- ⏳ Timing normalization hooks
+- ⏳ PCI topology control
 
 **Responsibilities**:
-- Intercept CPUID instructions in guest OS
-- Filter MSR reads/writes
-- Override ACPI tables visible to guest OS
-- Provide user-mode control interface (IOCTLs)
+- Intercept CPUID instructions in guest OS (NOT YET IMPLEMENTED)
+- Filter MSR reads/writes (NOT YET IMPLEMENTED)
+- Override ACPI tables visible to guest OS (FUTURE)
+- Provide user-mode control interface (IOCTLs) ✅
 
 **Development Guidelines**:
 - Follow Windows Driver Development guidelines
 - Use test-signing for development
+- See docs/driver-hvfilter.md for detailed documentation
 - Implement proper cleanup on driver unload
 - Provide safe fallbacks for failures
 - Document security implications clearly
@@ -216,27 +230,39 @@ function Set-AntiDetectionConfig { }
 - Compare against real hardware
 - Test on multiple Windows versions
 
-### Phase 3: CPUID & MSR Drivers ⚠️
-**Deliverables**:
-- cpuid.sys kernel driver
-- msr.sys kernel driver
-- User-mode control interface
-- Installation and signing guides
+### Phase 3: CPUID & MSR Drivers 🚧
+**Status**: Phase 3A (Skeleton) Complete ✅ | Phase 3B (Interception) Pending ⏳
 
-**Implementation Steps**:
-1. Design driver architecture
-2. Implement CPUID interception
-3. Implement MSR filtering
-4. Create IOCTL interface
-5. Test with anti-cheat detection tools
-6. Document security implications
+**Deliverables**:
+- ✅ nanabox_hvfilter.sys - Unified driver skeleton
+- ✅ NbxHvFilterClient.exe - User-mode helper utility
+- ✅ IOCTL interface for profile management
+- ✅ Installation and signing documentation
+- ⏳ CPUID interception implementation (Phase 3B)
+- ⏳ MSR filtering implementation (Phase 3B)
+
+**Phase 3A (Complete)**:
+1. ✅ Design driver architecture
+2. ✅ Create device and symbolic link
+3. ✅ Implement IOCTL interface
+4. ✅ Create user-mode helper
+5. ✅ Document build and installation process
+
+**Phase 3B (Pending)**:
+1. ⏳ Implement CPUID instruction hooking
+2. ⏳ Implement MSR read/write interception
+3. ⏳ Add profile-based configuration loading
+4. ⏳ Test with anti-cheat detection tools
+5. ⏳ Performance optimization
 
 **Testing**:
-- Test CPUID spoofing with CPU-Z
-- Test MSR blocking with RWEverything
-- Test with Pafish, Al-Khaser
-- Verify stability under load
-- Test driver unloading and cleanup
+- ✅ Verify driver loads and unloads cleanly
+- ✅ Test IOCTL communication with user-mode
+- ✅ Validate input buffer handling
+- ⏳ Test CPUID spoofing with CPU-Z (Phase 3B)
+- ⏳ Test MSR blocking with RWEverything (Phase 3B)
+- ⏳ Test with Pafish, Al-Khaser (Phase 3B)
+- ⏳ Verify stability under load (Phase 3B)
 
 **Security Considerations**:
 - ⚠️ Kernel drivers require extreme care
@@ -244,6 +270,7 @@ function Set-AntiDetectionConfig { }
 - ⚠️ Use test-signing during development
 - ⚠️ Document all security implications
 - ⚠️ Provide safe uninstall procedures
+- ✅ Current skeleton is safe - no CPU modification
 
 ### Phase 4: ACPI & Timing ⚠️
 **Deliverables**:
