@@ -168,7 +168,6 @@ function Confirm-Action {
         return $true
     }
     
-    $defaultChoice = if ($DefaultYes) { "Y" } else { "N" }
     $prompt = if ($DefaultYes) { "$Message [Y/n]" } else { "$Message [y/N]" }
     
     Write-Host ""
@@ -360,9 +359,14 @@ function Enable-TestSigning {
             Write-Warning "A system reboot is required for changes to take effect!"
             
             if (Confirm-Action "Reboot now?" -DefaultYes:$false) {
-                Write-Info "Rebooting system in 10 seconds... (Press Ctrl+C to cancel)"
-                Start-Sleep -Seconds 10
-                Restart-Computer -Force
+                Write-Warning "System will reboot in 30 seconds... (Press Ctrl+C to cancel)"
+                Write-Warning "Please save any open work before the reboot!"
+                for ($i = 30; $i -gt 0; $i--) {
+                    Write-Host "`rRebooting in $i seconds... " -NoNewline -ForegroundColor Yellow
+                    Start-Sleep -Seconds 1
+                }
+                Write-Host ""
+                Restart-Computer
                 exit 0
             } else {
                 Write-Info "Please reboot manually for test signing to take effect"
@@ -618,7 +622,8 @@ function Invoke-DriverSigning {
             "sign",
             "/v",
             "/sha1", $Certificate.Thumbprint,
-            "/t", "http://timestamp.digicert.com",
+            "/tr", "http://timestamp.digicert.com",
+            "/td", "SHA256",
             "/fd", "SHA256",
             $sysFile
         )
@@ -684,6 +689,13 @@ function Install-NanaBoxDriver {
             
             # Copy driver to system32\drivers
             $destPath = Join-Path $env:SystemRoot "System32\drivers\$DriverName.sys"
+            if (Test-Path $destPath) {
+                Write-Warning "Driver file already exists at: $destPath"
+                if (-not (Confirm-Action "Overwrite existing driver file?" -DefaultYes:$false)) {
+                    Write-Info "Skipping driver file copy"
+                    return $false
+                }
+            }
             Write-Info "Copying driver to: $destPath"
             Copy-Item -Path $sysFile -Destination $destPath -Force
             
