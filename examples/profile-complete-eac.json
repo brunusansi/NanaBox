@@ -1,0 +1,159 @@
+{
+  "NanaBox": {
+    "Type": "VirtualMachine",
+    "Version": 1,
+    "GuestType": "Windows",
+    "Name": "EAC-Generic-Complete",
+    "ProcessorCount": 6,
+    "MemorySize": 12288,
+    "ComPorts": {
+      "UefiConsole": "Disabled"
+    },
+    "Gpu": {
+      "AssignmentMode": "Default",
+      "EnableHostDriverStore": false
+    },
+    "NetworkAdapters": [
+      {
+        "Connected": true,
+        "MacAddress": "AC-DE-48-D1-E2-F3",
+        "EndpointId": ""
+      }
+    ],
+    "ScsiDevices": [
+      {
+        "Type": "VirtualDisk",
+        "Path": "EAC-Gaming.vhdx"
+      },
+      {
+        "Type": "VirtualImage",
+        "Path": ""
+      }
+    ],
+    "SecureBoot": true,
+    "Tpm": false,
+    "GuestStateFile": "EAC-Gaming.vmgs",
+    "RuntimeStateFile": "EAC-Gaming.vmrs",
+    "ExposeVirtualizationExtensions": false,
+    "Metadata": {
+      "Description": "Complete Easy Anti-Cheat gaming VM (Phases 2-5)",
+      "Notes": "Balanced configuration for EAC-protected games (Fortnite, Apex, Rust, etc.)",
+      "AccountId": "eac-gaming-001",
+      "ProfileId": "eac-complete",
+      "SchemaVersion": 1
+    },
+    "AntiDetectionProfile": "balanced",
+    "Smbios": {
+      "Enabled": true,
+      "Vendor": "Gigabyte Technology Co., Ltd.",
+      "Product": "B550 AORUS ELITE V2",
+      "Version": "Default string",
+      "SerialNumber": "GB-EAC4567890123",
+      "SkuNumber": "Default string",
+      "Family": "Default string",
+      "Baseboard": {
+        "Manufacturer": "Gigabyte Technology Co., Ltd.",
+        "Product": "B550 AORUS ELITE V2-CF",
+        "Version": "x.x",
+        "SerialNumber": "EAC567890123"
+      },
+      "Chassis": {
+        "Type": "Desktop",
+        "SerialNumber": "EAC-CHASSIS-123"
+      },
+      "Uuid": "EAC45678-90ab-cdef-1234-567890abcdef",
+      "OemStrings": [
+        "Default string"
+      ],
+      "Template": "desktop-amd-2021"
+    },
+    "Acpi": {
+      "Enabled": true,
+      "OemId": "AMD",
+      "OemTableId": "B550",
+      "OverrideTables": [],
+      "FixHyperVSignatures": true,
+      "SpoofBattery": false,
+      "SpoofDock": false
+    },
+    "CpuId": {
+      "Enabled": true,
+      "HideHypervisorBit": true,
+      "VendorId": "AuthenticAMD",
+      "BrandString": "AMD Ryzen 5 5600X 6-Core Processor",
+      "FeatureMasks": {
+        "ecx": "0xFFFFFFFF",
+        "edx": "0xFFFFFFFF"
+      },
+      "LeafOverrides": [
+        {
+          "Leaf": 1,
+          "Subleaf": 0,
+          "Eax": "auto",
+          "Ebx": "auto",
+          "Ecx": "mask:0x7FFFFFFF",
+          "Edx": "auto"
+        }
+      ],
+      "Templates": ["eac-generic", "amd-8c-2022"]
+    },
+    "MsrIntercept": {
+      "Enabled": true,
+      "Rules": [
+        {
+          "Msr": "0x40000000",
+          "Mode": "zero"
+        },
+        {
+          "Msr": "0x40000001",
+          "Mode": "zero"
+        },
+        {
+          "Msr": "0x40000002",
+          "Mode": "zero"
+        },
+        {
+          "Msr": "0x40000003",
+          "Mode": "zero"
+        },
+        {
+          "Msr": "0x40000080",
+          "Mode": "zero"
+        },
+        {
+          "Msr": "0x10",
+          "Mode": "mirror"
+        }
+      ],
+      "Template": "eac-safe"
+    },
+    "Timing": {
+      "Enabled": true,
+      "Mode": "balanced",
+      "Tsc": {
+        "NormalizeFrequency": true,
+        "TargetFrequencyMHz": 3700,
+        "JitterModel": "low-pc-like"
+      },
+      "Qpc": {
+        "Backend": "default",
+        "StabilityHints": true
+      }
+    },
+    "Pci": {
+      "Enabled": false
+    },
+    "ChipsetInformation": {
+      "Manufacturer": "Gigabyte Technology Co., Ltd.",
+      "ProductName": "B550 AORUS ELITE V2",
+      "Version": "Default string",
+      "SerialNumber": "GB-EAC4567890123",
+      "UUID": "EAC45678-90ab-cdef-1234-567890abcdef",
+      "SKUNumber": "Default string",
+      "Family": "Default string",
+      "BaseBoardSerialNumber": "EAC567890123",
+      "ChassisSerialNumber": "EAC-CHASSIS-123",
+      "ChassisAssetTag": ""
+    }
+  }
+}

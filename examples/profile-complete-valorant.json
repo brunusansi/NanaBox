@@ -1,0 +1,182 @@
+{
+  "NanaBox": {
+    "Type": "VirtualMachine",
+    "Version": 1,
+    "GuestType": "Windows",
+    "Name": "Valorant-Complete",
+    "ProcessorCount": 8,
+    "MemorySize": 16384,
+    "ComPorts": {
+      "UefiConsole": "Disabled"
+    },
+    "Gpu": {
+      "AssignmentMode": "Default",
+      "EnableHostDriverStore": false
+    },
+    "NetworkAdapters": [
+      {
+        "Connected": true,
+        "MacAddress": "D8-9E-F3-A1-B2-C3",
+        "EndpointId": ""
+      }
+    ],
+    "ScsiDevices": [
+      {
+        "Type": "VirtualDisk",
+        "Path": "Valorant.vhdx"
+      },
+      {
+        "Type": "VirtualImage",
+        "Path": ""
+      }
+    ],
+    "SecureBoot": true,
+    "Tpm": true,
+    "GuestStateFile": "Valorant.vmgs",
+    "RuntimeStateFile": "Valorant.vmrs",
+    "ExposeVirtualizationExtensions": false,
+    "Metadata": {
+      "Description": "Complete Valorant gaming VM with full anti-detection (Phases 2-5)",
+      "Notes": "Optimized for Riot Vanguard. Uses complete SMBIOS/ACPI/CPUID/MSR/Timing configuration.",
+      "AccountId": "valorant-primary-001",
+      "ProfileId": "valorant-complete",
+      "SchemaVersion": 1
+    },
+    "AntiDetectionProfile": "bare-metal",
+    "Smbios": {
+      "Enabled": true,
+      "Vendor": "ASUSTeK COMPUTER INC.",
+      "Product": "ROG STRIX Z690-A GAMING WIFI D4",
+      "Version": "Rev 1.xx",
+      "SerialNumber": "MB-VAL1234567890",
+      "SkuNumber": "SKU1234567890VAL",
+      "Family": "Desktop",
+      "Baseboard": {
+        "Manufacturer": "ASUSTeK COMPUTER INC.",
+        "Product": "ROG STRIX Z690-A GAMING WIFI D4",
+        "Version": "Rev 1.xx",
+        "SerialNumber": "200722VAL1234"
+      },
+      "Chassis": {
+        "Type": "Desktop",
+        "SerialNumber": "CHN-VAL1234567890"
+      },
+      "Uuid": "VAL00200-0400-0500-0006-000700080009",
+      "OemStrings": [
+        "Default string",
+        "ASUS ROG"
+      ],
+      "Template": "desktop-intel-2022"
+    },
+    "Acpi": {
+      "Enabled": true,
+      "OemId": "INTEL",
+      "OemTableId": "DESKTOP",
+      "OverrideTables": [],
+      "FixHyperVSignatures": true,
+      "SpoofBattery": false,
+      "SpoofDock": false
+    },
+    "CpuId": {
+      "Enabled": true,
+      "HideHypervisorBit": true,
+      "VendorId": "GenuineIntel",
+      "BrandString": "Intel(R) Core(TM) i7-12700K CPU @ 3.60GHz",
+      "FeatureMasks": {
+        "ecx": "0xFFFFFFFF",
+        "edx": "0xFFFFFFFF"
+      },
+      "LeafOverrides": [
+        {
+          "Leaf": 1,
+          "Subleaf": 0,
+          "Eax": "auto",
+          "Ebx": "auto",
+          "Ecx": "mask:0x7FFFFFFF",
+          "Edx": "auto"
+        },
+        {
+          "Leaf": 7,
+          "Subleaf": 0,
+          "Eax": "auto",
+          "Ebx": "auto",
+          "Ecx": "auto",
+          "Edx": "auto"
+        }
+      ],
+      "Templates": ["valorant-safe", "intel-8c-2020"]
+    },
+    "MsrIntercept": {
+      "Enabled": true,
+      "Rules": [
+        {
+          "Msr": "0x40000000",
+          "Mode": "zero"
+        },
+        {
+          "Msr": "0x40000001",
+          "Mode": "zero"
+        },
+        {
+          "Msr": "0x40000002",
+          "Mode": "zero"
+        },
+        {
+          "Msr": "0x40000003",
+          "Mode": "zero"
+        },
+        {
+          "Msr": "0x40000080",
+          "Mode": "zero"
+        },
+        {
+          "Msr": "0x40000081",
+          "Mode": "zero"
+        },
+        {
+          "Msr": "0x40000082",
+          "Mode": "zero"
+        },
+        {
+          "Msr": "0x10",
+          "Mode": "mirror"
+        },
+        {
+          "Msr": "0x1A",
+          "Mode": "mirror"
+        }
+      ],
+      "Template": "valorant-safe"
+    },
+    "Timing": {
+      "Enabled": true,
+      "Mode": "strict",
+      "Tsc": {
+        "NormalizeFrequency": true,
+        "TargetFrequencyMHz": 3600,
+        "JitterModel": "low-pc-like"
+      },
+      "Qpc": {
+        "Backend": "tsc",
+        "StabilityHints": true
+      }
+    },
+    "Pci": {
+      "Enabled": false,
+      "LayoutTemplate": "desktop-single-gpu-2021",
+      "Devices": []
+    },
+    "ChipsetInformation": {
+      "Manufacturer": "ASUSTeK COMPUTER INC.",
+      "ProductName": "ROG STRIX Z690-A GAMING WIFI D4",
+      "Version": "Rev 1.xx",
+      "SerialNumber": "MB-VAL1234567890",
+      "UUID": "VAL00200-0400-0500-0006-000700080009",
+      "SKUNumber": "SKU1234567890VAL",
+      "Family": "Desktop",
+      "BaseBoardSerialNumber": "200722VAL1234",
+      "ChassisSerialNumber": "CHN-VAL1234567890",
+      "ChassisAssetTag": ""
+    }
+  }
+}
